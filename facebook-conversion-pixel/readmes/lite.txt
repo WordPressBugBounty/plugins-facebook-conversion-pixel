@@ -2,15 +2,15 @@
 
 Contributors: fatcatapps, davidhme, ryannovotny, facebookpixel
 Donate link: https://fatcatapps.com/pixelcat
-Tags: facebook pixel, facebook conversion pixel, facebook pixel events, facebook standard events, facebook retargeting, facebook custom audiences, standard events, WooCommerce, easy digital downloads, Facebook Pixel woocommerce, facebook pixel easy digital downloads, conversions API, CAPI, Meta pixel, Google Analytics, GA3, GA4,
+Tags: meta pixel, facebook pixel, conversions API, custom audiences, CAPI
 Plugin URI: https://fatcatapps.com/
 Requires at least: 4.0
-Tested up to: 6.6
+Tested up to: 6.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 3.0.6
+Stable tag: 3.0.7
 
-Facebook Pixel Management Made Easy. From Facebook retargeting to Google conversion tracking, this plugin includes everything you need to run successful Facebook and Google ads.
+Add Meta & Facebook Pixel, Google Analytics (GA4) and any header script to your site. Everything you need to track users, ads, events & conversions.
 
 == Description ==
 
@@ -150,6 +150,11 @@ Pixel Cat - Conversion Pixel Manager will automatically detect your old settings
 
 
 == Changelog ==
+
+= Pixel Cat: Conversion Pixel Manager 3.0.7 =
+* Fix Quiz Cat integration - QuizCompletion event not firing as expected
+* Fix log Undefined array key "search_integration" reported
+* Tested up to WordPress 6.7
 
 = Pixel Cat: Conversion Pixel Manager 3.0.6 =
 * Fix possible XSS vector reported.

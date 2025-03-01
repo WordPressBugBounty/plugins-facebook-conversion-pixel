@@ -123,8 +123,9 @@ function fca_pc_maybe_add_pixel() {
 		wp_localize_script( 'fca_pc_client_js', 'fcaPcPost', fca_pc_post_parameters( $options ) );
 		wp_localize_script( 'fca_pc_client_js', 'fcaPcOptions', fca_pc_localize_pixel_options( $options ) );
 		
+		$search_integration = empty( $options['search_integration'] ) ? '' : $options['search_integration'];
 		//ONLY USE DEFAULT SEARCH IF WE DIDNT USE WOO OR EDD SPECIFIC
-		if ( is_search() && $options['search_integration'] == 'on' ) {
+		if ( is_search() && $search_integration == 'on' ) {
 			wp_localize_script( 'fca_pc_client_js', 'fcaPcSearchQuery', array( 'search_string' => get_search_query() ) );
 		}
 		
@@ -787,13 +788,17 @@ function fca_pc_get_post_triggers() {
 		'front' => esc_attr__( 'Front Page', 'facebook-conversion-pixel' ),
 		'blog' => esc_attr__( 'Blog Page', 'facebook-conversion-pixel' )
 	);
-
-	$custom_post_type_triggers = apply_filters( 'fca_pc_custom_post_support', array() );
+	
+	$options = get_option( 'fca_pc', array() );
+	
+	$cpt_support = empty ( $options['cpt_support'] ) ? array() : $options['cpt_support'];
+	
+	$custom_post_type_triggers = apply_filters( 'fca_pc_custom_post_support', $cpt_support );
 
 	if ( is_array( $custom_post_type_triggers ) && count( $custom_post_type_triggers ) > 0 ) {
 		forEach ( $custom_post_type_triggers as $cpt_slug ) {
 			$cpt_obj = get_post_type_object( $cpt_slug );
-
+			
 			if ( $cpt_obj ) {
 				$cpt_name = $cpt_obj->labels->singular_name;
 

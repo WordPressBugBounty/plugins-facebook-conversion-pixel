@@ -193,7 +193,7 @@ function fca_pc_add_event_form() {
 				</td>
 			</tr>
 			<tr id='fca-pc-post-input-tr'>
-				<th><?php esc_attr_e( 'Pages', 'facebook-conversion-pixel' ); echo fca_pc_tooltip( esc_attr__( 'Choose where on your site to trigger this event. You can choose any posts, pages, or categories.', 'facebook-conversion-pixel' ) ) ?></th>
+				<th><?php esc_attr_e( 'Pages', 'facebook-conversion-pixel' ); echo fca_pc_tooltip( esc_attr__( 'Choose where on your site to trigger this event. You can choose any posts, pages, or categories. Add custom post type support in the Settings tab. (Premium only)', 'facebook-conversion-pixel' ) ) ?></th>
 				<td>
 					<?php echo fca_pc_select_multiple( 'modal_post_trigger_input', array(), $triggers, "id='fca-pc-modal-post-trigger-input'" ); ?>
 				</td>
@@ -479,7 +479,7 @@ function fca_pc_add_pixel_form() {
 				<th style="top: 0;"><?php echo esc_attr( 'Excluded Pages', 'facebook-conversion-pixel' ) . fca_sp_premium_only_link() ?></th>				
 				<td>
 					<?php echo fca_pc_select_multiple( 'excluded_pages', array(), fca_pc_get_post_triggers(), "id='fca-pc-pixel-excluded-pages'" ) ?>
-					<p class='fca_pc_hint'><?php esc_attr_e( 'The pixel/code will be added sitewide unless added to the "Excluded Pages" above', 'facebook-conversion-pixel' ) ?></p>
+					<p class='fca_pc_hint'><?php esc_attr_e( 'The pixel/code will be added sitewide unless added to the "Excluded Pages" above. Add custom post type support in the Settings tab. (Premium only).', 'facebook-conversion-pixel' ) ?></p>
 					
 				</td>
 			</tr>				
@@ -625,6 +625,8 @@ function fca_pc_settings_save() {
 	$data['events'] = empty( $_POST['fca_pc']['event_json'] ) ? array() : array_map( 'sanitize_text_field', $_POST['fca_pc']['event_json'] );
 
 	$data['exclude'] = empty( $_POST['fca_pc']['exclude'] ) ? array() : array_map( 'fca_pc_sanitize_text_array', $_POST['fca_pc']['exclude'] );
+	
+	$data['cpt_support'] = empty( $_POST['fca_pc']['cpt_support'] ) ? array() : array_map( 'fca_pc_sanitize_text_array', $_POST['fca_pc']['cpt_support'] );
 
 	$data['search_integration'] = empty( $_POST['fca_pc']['search_integration'] ) ? '' : 'on';
 	$data['quizcat_integration'] = empty( $_POST['fca_pc']['quizcat_integration'] ) ? '' : 'on';
@@ -666,6 +668,10 @@ function fca_pc_add_settings_table( $options ) {
 	$conversions_api = empty ( $options['conversions_api'] ) ? false : true;
 	$advanced_matching = empty ( $options['advanced_matching'] ) ? false : true;
 	$exclude = empty ( $options['exclude'] ) ? array() : $options['exclude'];
+	$cpt_support = empty ( $options['cpt_support'] ) ? array() : $options['cpt_support'];
+	$custom_post_types = get_post_types();
+	unset( $custom_post_types['post'] );
+	unset( $custom_post_types['page'] );
 	
 	$role_options = array();
 	forEach ( get_editable_roles() as $role ) {
@@ -702,6 +708,11 @@ function fca_pc_add_settings_table( $options ) {
 			<span class='fca_pc_hint'><?php esc_attr_e("Logged in users selected above will not trigger your pixel.", 'facebook-conversion-pixel' ) ?></span></td>
 		</tr>
 
+		<tr>
+			<th><?php echo esc_attr( 'Custom Post Type Support', 'facebook-conversion-pixel' ) . fca_sp_premium_only_link() ?></th>
+			<td><?php echo fca_pc_select_multiple( 'cpt_support', $cpt_support, $custom_post_types, "id='fca-pc-cpt_support'" ) ?>
+			<span class='fca_pc_hint'><?php esc_attr_e("Select Custom Post Type support to allow adding events to specfied custom post types such as a Media item, WooCommerce Product or something else.", 'facebook-conversion-pixel' ) ?></span></td>
+		</tr>
 		<tr>
 			<th><?php echo esc_attr( 'Additional user information', 'facebook-conversion-pixel' ) . fca_sp_premium_only_link() ?></th>
 			<td><?php echo fca_pc_input( 'user_parameters', '', $user_parameters_on, 'checkbox' ) ?>
@@ -876,7 +887,7 @@ function fca_pc_add_woo_integrations( $options ) {
 				<?php esc_attr_e( 'WooCommerce', 'facebook-conversion-pixel' ) ?>
 				<span class="installed-text"><span alt="f158" class="dashicons dashicons-no-alt"></span><?php esc_attr_e( 'Not Installed', 'facebook-conversion-pixel' ) ?></span>
 			</h3>
-			<p><?php esc_attr_e( 'Plugin not detected. To use this integration, please install Woocommerce v.3.0 or greater.', 'facebook-conversion-pixel' ) ?></p>
+			<p><?php esc_attr_e( 'Plugin not detected. To use this integration, please install Woocommerce v3.0 or greater.', 'facebook-conversion-pixel' ) ?></p>
 		<?php } else {
 			?>
 			<h3>

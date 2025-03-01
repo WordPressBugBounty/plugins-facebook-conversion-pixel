@@ -11,18 +11,19 @@ jQuery( document ).ready(function($) {
 			var triggerType = fcaPcEvents[i].triggerType
 			var trigger = fcaPcEvents[i].trigger
 			var apiAction = fcaPcEvents[i].apiAction
+			var pixelType = fcaPcEvents[i].pixel_type
 			
 			switch ( triggerType ) {
 				case 'css':
-					$( trigger ).on( 'click', { name: eventName, params: parameters, apiAction: apiAction }, function( e ){
-						fca_pc_trigger_event( e.data.apiAction, e.data.name, e.data.params )
+					$( trigger ).on( 'click', { name: eventName, params: parameters, apiAction: apiAction, pixelType: pixelType }, function( e ){
+						fca_pc_trigger_event( e.data.apiAction, e.data.name, e.data.params, e.data.pixelType )
 					})
 					break
 
 				case 'hover':
 
-					$( trigger ).on( 'mouseenter', { name: eventName, params: parameters, apiAction: apiAction, trigger: trigger }, function( e ){
-						fca_pc_trigger_event( e.data.apiAction, e.data.name, e.data.params )
+					$( trigger ).on( 'mouseenter', { name: eventName, params: parameters, apiAction: apiAction, trigger: trigger, pixelType: pixelType }, function( e ){
+						fca_pc_trigger_event( e.data.apiAction, e.data.name, e.data.params, e.data.pixelType )
 						$( e.data.trigger ).off( 'mouseenter' )
 					})
 
@@ -30,33 +31,34 @@ jQuery( document ).ready(function($) {
 
 				case 'post':
 					if ( fcaPcEvents[i].hasOwnProperty( 'delay' ) && fcaPcEvents[i].hasOwnProperty( 'scroll' ) ) {
-						setTimeout( function( scrollTarget, apiAction, eventName, parameters ){
+						setTimeout( function( scrollTarget, apiAction, eventName, parameters, pixelType ){
 							$( window ).scroll( {
 								'scrollTarget': scrollTarget,
 								'apiAction': apiAction,
 								'eventName': eventName,
 								'parameters': parameters,
+								'pixelType': pixelType
 								}, function( e ) {
 									if ( e.data.scrollTarget <= scrolled_percent() ) {
 										$( window ).off( e )
-										fca_pc_trigger_event( apiAction, eventName, parameters )
+										fca_pc_trigger_event( apiAction, eventName, parameters, pixelType )
 									}
 							}).trigger( 'scroll' )
-						}, fcaPcEvents[i].delay * 1000, fcaPcEvents[i].scroll, apiAction, eventName, parameters  )
+						}, fcaPcEvents[i].delay * 1000, fcaPcEvents[i].scroll, apiAction, eventName, parameters, pixelType )
 
 
 					} else if ( fcaPcEvents[i].hasOwnProperty( 'delay' ) ) {
-						setTimeout( fca_pc_trigger_event, fcaPcEvents[i].delay * 1000, apiAction, eventName, parameters  )
+						setTimeout( fca_pc_trigger_event, fcaPcEvents[i].delay * 1000, apiAction, eventName, parameters, pixelType  )
 					} else {
-						fca_pc_trigger_event( apiAction, eventName, parameters )
+						fca_pc_trigger_event( apiAction, eventName, parameters, pixelType )
 					}
 					break
 
 				case 'url':
 					$( 'a' ).each(function(){
 						if ( $(this).attr( 'href' ) === trigger ) {
-							$(this).on( 'click', { name: eventName, params: parameters, apiAction: apiAction }, function( e ){
-								fca_pc_trigger_event( e.data.apiAction, e.data.name, e.data.params )
+							$(this).on( 'click', { name: eventName, params: parameters, apiAction: apiAction, pixelType: pixelType }, function( e ){
+								fca_pc_trigger_event( e.data.apiAction, e.data.name, e.data.params, e.data.pixelType )
 							})
 						}
 					})
@@ -111,8 +113,7 @@ jQuery( document ).ready(function($) {
 					if( data.success ) {
 						if( fca_pc_pixel_type_enabled( 'Facebook' ) || fca_pc_pixel_type_enabled( 'Conversions API' ) ) {							
 							fca_pc_trigger_event( 'track', 'AddToCart', data.facebook )
-						}
-						
+						}						
 						if( fca_pc_pixel_type_enabled( 'TikTok' ) ) {
 							fca_pc_trigger_event( 'track', 'AddToCartTiktok', data.tiktok )
 						}
@@ -695,14 +696,14 @@ jQuery( document ).ready(function($) {
 		$( '.fca_qc_start_button' ).on( 'click', function( e ){
 			var id = parseInt ( $(this).closest( '.fca_qc_quiz' ).prop( 'id' ).replace( 'fca_qc_quiz_', '' ) )
 			var name = $(this).closest( '.fca_qc_quiz' ).find( '.fca_qc_quiz_title' ).text()
-			fca_pc_trigger_event( 'trackCustom', 'QuizStart', { 'quiz_id': id, 'quiz_name': name } )
+			fca_pc_trigger_custom_events( 'trackCustom', 'QuizStart', { 'quiz_id': id, 'quiz_name': name } )
 			return true
-		})
+		}) 
 
 		$( '.fca_qc_share_link' ).on( 'click', function( e ){
 			var id = parseInt ( $(this).closest( '.fca_qc_quiz' ).prop( 'id' ).replace( 'fca_qc_quiz_', '' ) )
 			var name = $(this).closest( '.fca_qc_quiz' ).find( '.fca_qc_quiz_title' ).text()
-			fca_pc_trigger_event( 'trackCustom', 'QuizShare', { 'quiz_id': id, 'quiz_name': name } )
+			fca_pc_trigger_custom_events( 'trackCustom', 'QuizShare', { 'quiz_id': id, 'quiz_name': name } )
 			return true
 		})
 
@@ -734,20 +735,43 @@ jQuery( document ).ready(function($) {
 
 			}
 		})
-
-		$( '.fca_qc_score_title' ).on( 'DOMSubtreeModified', function( e ){
-			if( !$(this).data( 'pixelcat' ) ) {
-				$(this).data( 'pixelcat', true)
-				var id = parseInt ( $(this).closest( '.fca_qc_quiz' ).prop( 'id' ).replace( 'fca_qc_quiz_', '' ) )
-				var name = $(this).closest( '.fca_qc_quiz' ).find( '.fca_qc_quiz_title' ).text()
-				fca_pc_trigger_event( 'trackCustom', 'QuizCompletion', { 'quiz_id': id, 'quiz_name': name, 'quiz_result': $(this).text() } )
-			}
-			return true
+		
+		var quizFinishObserver = new MutationObserver( function( records, observer ) {
+			var $thisDomObj = $( records[0].target )
+			
+			var id = parseInt ( $thisDomObj.closest( '.fca_qc_quiz' ).prop( 'id' ).replace( 'fca_qc_quiz_', '' ) )
+			var name = $thisDomObj.closest( '.fca_qc_quiz' ).find( '.fca_qc_quiz_title' ).text()
+			fca_pc_trigger_custom_events( 'trackCustom', 'QuizCompletion', { 'quiz_id': id, 'quiz_name': name, 'quiz_result': $thisDomObj.text() } )
+						
+			observer.disconnect()
+			
 		})
+		
+		$( '.fca_qc_score_title' ).each(function(){
+			quizFinishObserver.observe( this,  { attributes: true, childList: true } )
+		})
+
 	}
 	
+	function fca_pc_trigger_custom_events( name, action, params ) {
+		if( fca_pc_pixel_type_enabled( 'Facebook Pixel' ) ||  fca_pc_pixel_type_enabled( 'Conversions API' ) ) {
+			fca_pc_trigger_event( name, action, params, 'Facebook' )
+		}
+		if( fca_pc_pixel_type_enabled( 'TikTok' ) ) {
+			fca_pc_trigger_event( name, action, params, 'TikTok' )
+		}
+		if( fca_pc_pixel_type_enabled( 'Snapchat' ) ) {
+			//UNSUPPORTED
+		}
+		if( fca_pc_pixel_type_enabled( 'Pinterest' ) ) {
+			fca_pc_trigger_event( name, action, params, 'Pinterest' )
+		}
+		if( fca_pc_pixel_type_enabled( 'GA3' ) || fca_pc_pixel_type_enabled( 'GA4' ) || fca_pc_pixel_type_enabled( 'Adwords' ) ) {
+			fca_pc_trigger_event( name, action, params, 'Google Analytics' )
+		}
+	}
 	
-	function fca_pc_trigger_event( name, action, params ) {
+	function fca_pc_trigger_event( name, action, params, pixelType ) {
 
 		var event_params = params ? add_auto_event_params( params ) : null
 		
@@ -758,7 +782,7 @@ jQuery( document ).ready(function($) {
 			var currentTime = new Date($.now()).toUTCString()
 			var GMT_time = new Date(currentTime).valueOf() / 1000
 					
-			if ( name === 'trackCustom' ) {				
+			if ( name === 'trackCustom' && pixelType === 'Facebook' ) {				
 				fbq( name, action, event_params, { event_id: eventID, external_id: externalID }  )
 				
 				if( fca_pc_pixel_type_enabled( 'Conversions API' ) ){
@@ -825,28 +849,24 @@ jQuery( document ).ready(function($) {
 						
 			var eventID = fca_pc_generate_id()
 			var externalID = fca_pc_check_cookie()
+				
+			var events_map = new Map([
+				[ "PageViewSnapchat", "PAGE_VIEW" ],
+				[ "ViewContentSnapchat", "VIEW_CONTENT" ],
+				[ "PurchaseSnapchat", "PURCHASE" ],
+				[ "AddToCartSnapchat", "ADD_CART" ],				
+				[ "InitiateCheckoutSnapchat", "START_CHECKOUT" ],	
+				[ "AddToWishlistSnapchat", "ADD_TO_WISHLIST" ],			
+				[ "AddPaymentInfoSnapchat", "ADD_BILLING" ],
+				
+			])
+			var snapchat_action = events_map.get( action )
 			
-			if ( name === 'trackCustom' ) {
-				//NOT SUPPOSED FOR THIS PIXEL
-			} else {
+			if ( snapchat_action ) {
 				
-				var events_map = new Map([
-					[ "PageViewSnapchat", "PAGE_VIEW" ],
-					[ "ViewContentSnapchat", "VIEW_CONTENT" ],
-					[ "PurchaseSnapchat", "PURCHASE" ],
-					[ "AddToCartSnapchat", "ADD_CART" ],				
-					[ "InitiateCheckoutSnapchat", "START_CHECKOUT" ],	
-					[ "AddToWishlistSnapchat", "ADD_TO_WISHLIST" ],			
-					[ "AddPaymentInfoSnapchat", "ADD_BILLING" ],
-					
-				])
-				var snapchat_action = events_map.get( action )
-				
-				if ( snapchat_action ) {
-					
-					snaptr( name, snapchat_action, event_params, { event_id: eventID, external_id: externalID }  )				
-				}				
-			}
+				snaptr( name, snapchat_action, event_params, { event_id: eventID, external_id: externalID }  )				
+			}				
+		
 		}
 		
 		if( typeof( ttq ) !== 'undefined' ){
@@ -871,28 +891,31 @@ jQuery( document ).ready(function($) {
 				ttq.track( tiktok_action, event_params )			
 			}
 			
-			if ( name === 'trackCustom' ) {
+			if ( name === 'trackCustom' && pixelType === 'TikTok' ) {
 				ttq.track( action, event_params )	
 			}
 		}
 		
 		if( typeof( pintrk ) !== 'undefined' ){
-		
-			var events_map = new Map([
-				[ "AddToCartPinterest", "AddToCart" ],
-				[ "PurchasePinterest", "Checkout" ],	
-				[ "LeadPinterest", "Lead" ],				
-				[ "ViewContentPinterest", "PageVisit" ],			
-				[ "CompleteRegistrationPinterest", "Signup" ],
+			if ( name === 'trackCustom' && pixelType === 'Pinterest' ) {
+				pintrk( 'track', action, event_params  )	
+			} else {
+				var events_map = new Map([
+					[ "AddToCartPinterest", "AddToCart" ],
+					[ "PurchasePinterest", "Checkout" ],	
+					[ "LeadPinterest", "Lead" ],				
+					[ "ViewContentPinterest", "PageVisit" ],			
+					[ "CompleteRegistrationPinterest", "Signup" ],
+					
+					//[ "Lead", "generate_lead" ], TO DO?
+					//[ "Search", "search" ], TO DO?
+				])
 				
-				//[ "Lead", "generate_lead" ], TO DO?
-				//[ "Search", "search" ], TO DO?
-			])
-			
-			var pinterest_action = events_map.get( action )
+				var pinterest_action = events_map.get( action )
 
-			if ( pinterest_action ) {
-				pintrk( 'track', pinterest_action, event_params  )				
+				if ( pinterest_action ) {
+					pintrk( 'track', pinterest_action, event_params  )				
+				}
 			}
 		}
 		
@@ -917,7 +940,7 @@ jQuery( document ).ready(function($) {
 					gtag( 'event', gtag_action, event_params  )				
 				}
 			} 
-			if ( name === 'trackCustom' ) {
+			if ( name === 'trackCustom' && pixelType === 'Google Analytics' ) {
 				gtag( 'event', action, event_params  )
 			}
 		}

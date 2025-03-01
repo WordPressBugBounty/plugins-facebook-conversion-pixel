@@ -134,7 +134,7 @@ var supported_params = {
 		'custom': 1
 	},
 	
-	'ViewContentTikttok': {
+	'ViewContentTiktok': {
 		'value': 1,
 		'currency': 1,
 		'content_name': 1,
@@ -478,6 +478,7 @@ jQuery(document).ready(function($){
 	if ( !fcaPcAdminData.premium ) {
 		$(  '.fca-pc-user_parameters, ' +
 			'.fca-pc-utm_support, ' +
+			'#fca-pc-cpt_support, ' +
 			'#fca-pc-modal-delay-input, ' +
 			'#fca-pc-modal-scroll-input, ' +
 			'#fca-pc-add-custom-param, ' +
@@ -845,8 +846,7 @@ jQuery(document).ready(function($){
 					'AddToWishlistSnapchat',
 					'InitiateCheckoutSnapchat',
 					'AddPaymentInfoSnapchat',
-					'PurchaseSnapchat',
-					'custom'
+					'PurchaseSnapchat'
 				]
 				break
 				
