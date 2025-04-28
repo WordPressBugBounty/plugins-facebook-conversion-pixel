@@ -63,6 +63,34 @@ jQuery( document ).ready(function($) {
 						}
 					})
 					break
+					
+				case 'exact_url':					
+					if ( window.location.href === trigger ) {
+						if ( fcaPcEvents[i].hasOwnProperty( 'delay' ) && fcaPcEvents[i].hasOwnProperty( 'scroll' ) ) {
+							setTimeout( function( scrollTarget, apiAction, eventName, parameters, pixelType ){
+								$( window ).scroll( {
+									'scrollTarget': scrollTarget,
+									'apiAction': apiAction,
+									'eventName': eventName,
+									'parameters': parameters,
+									'pixelType': pixelType
+									}, function( e ) {
+										if ( e.data.scrollTarget <= scrolled_percent() ) {
+											$( window ).off( e )
+											fca_pc_trigger_event( apiAction, eventName, parameters, pixelType )
+										}
+								}).trigger( 'scroll' )
+							}, fcaPcEvents[i].delay * 1000, fcaPcEvents[i].scroll, apiAction, eventName, parameters, pixelType )
+
+
+						} else if ( fcaPcEvents[i].hasOwnProperty( 'delay' ) ) {
+							setTimeout( fca_pc_trigger_event, fcaPcEvents[i].delay * 1000, apiAction, eventName, parameters, pixelType  )
+						} else {
+							fca_pc_trigger_event( apiAction, eventName, parameters, pixelType )
+						}
+					}
+				
+					break
 			}
 
 		}
@@ -807,17 +835,24 @@ jQuery( document ).ready(function($) {
 			} else {
 				
 				var events_map = new Map([
-					[ "PageView", "PageView" ],
-					[ "ViewContent", "ViewContent" ],
-					[ "Search", "Search" ],	
-					[ "AddToCart", "AddToCart" ],				
-					[ "AddToWishlist", "AddToWishlist" ],			
-					[ "InitiateCheckout", "InitiateCheckout" ],	
-					[ "AddPaymentInfo", "AddPaymentInfo" ],
-					[ "Purchase", "Purchase" ],
-					[ "Lead", "Lead" ],
-					[ "CompleteRegistration", "CompleteRegistration" ],
-					
+					[ "AddPaymentInfo", "AddPaymentInfo" ],  
+					[ "AddToCart", "AddToCart" ],  
+					[ "AddToWishlist", "AddToWishlist" ],  
+					[ "CompleteRegistration", "CompleteRegistration" ],  
+					[ "Contact", "Contact" ],  
+					[ "CustomizeProduct", "CustomizeProduct" ],  
+					[ "Donate", "Donate" ],  
+					[ "FindLocation", "FindLocation" ],  
+					[ "InitiateCheckout", "InitiateCheckout" ],  
+					[ "Lead", "Lead" ],  
+					[ "PageView", "PageView" ],  
+					[ "Purchase", "Purchase" ],  
+					[ "Schedule", "Schedule" ],  
+					[ "Search", "Search" ],  
+					[ "StartTrial", "StartTrial" ],  
+					[ "SubmitApplication", "SubmitApplication" ],  
+					[ "Subscribe", "Subscribe" ],  
+					[ "ViewContent", "ViewContent" ]					
 				])
 				var fb_action = events_map.get( action )
 				

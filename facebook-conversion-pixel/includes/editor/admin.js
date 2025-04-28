@@ -5,6 +5,7 @@
 var basic_params = [
 	'value',
 	'currency',
+	'predicted_ltv',
 	'content_name',
 	'content_type',
 	'content_ids',
@@ -16,76 +17,26 @@ var basic_params = [
 ]
 
 var supported_params = {
-
-	'ViewContent': {
-		'value': 1,
-		'currency': 1,
-		'content_name': 1,
-		'content_type': 1,
-		'content_ids': 1,
-		'content_category': 0,
-		'search_string': 0,
-		'num_items': 0,
-		'status': 0,
-		'custom': 1
-	},
-
-	'Search': {
-		'value': 1,
-		'currency': 1,
-		'content_name': 0,
-		'content_type': 0,
-		'content_ids': 1,
-		'content_category': 1,
-		'search_string': 1,
-		'num_items': 0,
-		'status': 0,
-		'custom': 1
-	},
-
-	'AddToCart': {
-		'value': 1,
-		'currency': 1,
-		'content_name': 1,
-		'content_type': 1,
-		'content_ids': 1,
-		'content_category': 0,
-		'search_string': 0,
-		'num_items': 0,
-		'status': 0,
-		'custom': 1
-	},
-
-	'AddToWishlist': {
-		'value': 1,
-		'currency': 1,
-		'content_name': 1,
-		'content_type': 1,
-		'content_ids': 1,
-		'content_category': 1,
-		'search_string': 0,
-		'num_items': 0,
-		'status': 0,
-		'custom': 1
-	},
-
-	'InitiateCheckout': {
-		'value': 1,
-		'currency': 1,
-		'content_name': 1,
-		'content_type': 1,
-		'content_ids': 1,
-		'content_category': 1,
-		'search_string': 0,
-		'num_items': 1,
-		'status': 0,
-		'custom': 1
-	},
-
+	
 	'AddPaymentInfo': {
 		'value': 1,
 		'currency': 1,
-		'content_name': 0,
+		'predicted_ltv': 0,
+		'content_name': 1,
+		'content_type': 0,
+		'content_ids': 1,
+		'content_category': 1,
+		'search_string': 0,
+		'num_items': 0,
+		'status': 0,
+		'custom': 1
+	},
+	
+	'AddToCart': {
+		'value': 1,
+		'currency': 1,
+		'predicted_ltv': 0,
+		'content_name': 1,
 		'content_type': 1,
 		'content_ids': 1,
 		'content_category': 1,
@@ -94,26 +45,14 @@ var supported_params = {
 		'status': 0,
 		'custom': 1
 	},
-
-	'Purchase': {
-		'value': 2,
-		'currency': 2,
-		'content_name': 1,
-		'content_type': 1,
-		'content_ids': 1,
-		'content_category': 0,
-		'search_string': 0,
-		'num_items': 1,
-		'status': 0,
-		'custom': 1
-	},
-
-	'Lead': {
+	
+	'AddToWishlist': {
 		'value': 1,
 		'currency': 1,
+		'predicted_ltv': 0,
 		'content_name': 1,
 		'content_type': 0,
-		'content_ids': 0,
+		'content_ids': 1,
 		'content_category': 1,
 		'search_string': 0,
 		'num_items': 0,
@@ -124,19 +63,203 @@ var supported_params = {
 	'CompleteRegistration': {
 		'value': 1,
 		'currency': 1,
+		'predicted_ltv': 0,
 		'content_name': 1,
 		'content_type': 0,
 		'content_ids': 0,
-		'content_category': 0,
+		'content_category': 1,
 		'search_string': 0,
 		'num_items': 0,
 		'status': 1,
 		'custom': 1
 	},
 	
+	'Contact': {
+		'value': 0,
+		'currency': 0,
+		'predicted_ltv': 0,
+		'content_name': 1,
+		'content_type': 0,
+		'content_ids': 0,
+		'content_category': 1,
+		'search_string': 0,
+		'num_items': 0,
+		'status': 0,
+		'custom': 1
+	},
+		
+	'CustomizeProduct': {
+		'value': 0,
+		'currency': 0,
+		'predicted_ltv': 0,
+		'content_name': 1,
+		'content_type': 0,
+		'content_ids': 0,
+		'content_category': 1,
+		'search_string': 0,
+		'num_items': 0,
+		'status': 0,
+		'custom': 1
+	},
+	
+	'Donate': {
+		'value': 0,
+		'currency': 0,
+		'predicted_ltv': 0,
+		'content_name': 1,
+		'content_type': 0,
+		'content_ids': 0,
+		'content_category': 1,
+		'search_string': 0,
+		'num_items': 0,
+		'status': 0,
+		'custom': 1
+	},
+		
+	'FindLocation': {
+		'value': 0,
+		'currency': 0,
+		'predicted_ltv': 0,
+		'content_name': 1,
+		'content_type': 0,
+		'content_ids': 0,
+		'content_category': 1,
+		'search_string': 0,
+		'num_items': 0,
+		'status': 0,
+		'custom': 1
+	},
+	
+	'InitiateCheckout': {
+		'value': 1,
+		'currency': 1,
+		'predicted_ltv': 0,
+		'content_name': 1,
+		'content_type': 0,
+		'content_ids': 1,
+		'content_category': 1,
+		'search_string': 0,
+		'num_items': 1,
+		'status': 0,
+		'custom': 1
+	},
+	
+	'Lead': {
+		'value': 1,
+		'currency': 1,
+		'predicted_ltv': 0,
+		'content_name': 1,
+		'content_type': 0,
+		'content_ids': 0,
+		'content_category': 1,
+		'search_string': 0,
+		'num_items': 0,
+		'status': 0,
+		'custom': 1
+	},
+	
+	'Purchase': {
+		'value': 2,
+		'currency': 2,
+		'predicted_ltv': 0,
+		'content_name': 1,
+		'content_type': 1,
+		'content_ids': 1,
+		'content_category': 1,
+		'search_string': 0,
+		'num_items': 1,
+		'status': 0,
+		'custom': 1
+	},
+	
+	'Schedule': {
+		'value': 0,
+		'currency': 0,
+		'predicted_ltv': 0,
+		'content_name': 1,
+		'content_type': 0,
+		'content_ids': 0,
+		'content_category': 1,
+		'search_string': 0,
+		'num_items': 0,
+		'status': 0,
+		'custom': 1
+	},
+	
+	'Search': {
+		'value': 1,
+		'currency': 1,
+		'predicted_ltv': 0,
+		'content_name': 1,
+		'content_type': 1,
+		'content_ids': 1,
+		'content_category': 1,
+		'search_string': 1,
+		'num_items': 0,
+		'status': 0,
+		'custom': 1
+	},
+	
+	'StartTrial': {
+		'value': 1,
+		'currency': 1,
+		'predicted_ltv': 1,
+		'content_name': 1,
+		'content_type': 0,
+		'content_ids': 0,
+		'content_category': 1,
+		'search_string': 0,
+		'num_items': 0,
+		'status': 0,
+		'custom': 1
+	},
+	
+	'SubmitApplication': {
+		'value': 0,
+		'currency': 0,
+		'predicted_ltv': 0,
+		'content_name': 1,
+		'content_type': 0,
+		'content_ids': 0,
+		'content_category': 1,
+		'search_string': 0,
+		'num_items': 0,
+		'status': 0,
+		'custom': 1
+	},
+	
+	'Subscribe': {
+		'value': 1,
+		'currency': 1,
+		'predicted_ltv': 1,
+		'content_name': 1,
+		'content_type': 0,
+		'content_ids': 0,
+		'content_category': 1,
+		'search_string': 0,
+		'num_items': 0,
+		'status': 0,
+		'custom': 1
+	},
+	
+	'ViewContent': {
+		'value': 1,
+		'currency': 1,
+		'predicted_ltv': 0,
+		'content_name': 1,
+		'content_type': 1,
+		'content_ids': 1,
+		'content_category': 1,
+		'search_string': 0,
+		'num_items': 0,
+		'status': 0,
+		'custom': 1
+	},
+	
 	'ViewContentTiktok': {
 		'value': 1,
 		'currency': 1,
+		'predicted_ltv': 0,
 		'content_name': 1,
 		'content_type': 1,
 		'content_ids': 1,
@@ -150,6 +273,7 @@ var supported_params = {
 	'AddToCartTiktok': {
 		'value': 1,
 		'currency': 1,
+		'predicted_ltv': 0,
 		'content_name': 1,
 		'content_type': 1,
 		'content_ids': 1,
@@ -163,6 +287,7 @@ var supported_params = {
 	'AddToWishlistTiktok': {
 		'value': 1,
 		'currency': 1,
+		'predicted_ltv': 0,
 		'content_name': 1,
 		'content_type': 1,
 		'content_ids': 1,
@@ -176,6 +301,7 @@ var supported_params = {
 	'InitiateCheckoutTiktok': {
 		'value': 1,
 		'currency': 1,
+		'predicted_ltv': 0,
 		'content_name': 1,
 		'content_type': 1,
 		'content_ids': 1,
@@ -189,6 +315,7 @@ var supported_params = {
 	'AddPaymentInfoTiktok': {
 		'value': 1,
 		'currency': 1,
+		'predicted_ltv': 0,
 		'content_name': 0,
 		'content_type': 1,
 		'content_ids': 1,
@@ -202,6 +329,7 @@ var supported_params = {
 	'PurchaseTiktok': {
 		'value': 1,
 		'currency': 1,
+		'predicted_ltv': 0,
 		'content_name': 1,
 		'content_type': 1,
 		'content_ids': 1,
@@ -215,6 +343,7 @@ var supported_params = {
 	'CompleteRegistrationTiktok': {
 		'value': 1,
 		'currency': 1,
+		'predicted_ltv': 0,
 		'content_name': 1,
 		'content_type': 0,
 		'content_ids': 0,
@@ -228,6 +357,7 @@ var supported_params = {
 	'ViewContentPinterest': {
 		'value': 1,
 		'currency': 1,
+		'predicted_ltv': 0,
 		'content_name': 1,
 		'content_type': 1,
 		'content_ids': 1,
@@ -241,6 +371,7 @@ var supported_params = {
 	'AddToCartPinterest': {
 		'value': 1,
 		'currency': 1,
+		'predicted_ltv': 0,
 		'content_name': 1,
 		'content_type': 1,
 		'content_ids': 1,
@@ -254,6 +385,7 @@ var supported_params = {
 	'PurchasePinterest': {
 		'value': 2,
 		'currency': 2,
+		'predicted_ltv': 0,
 		'content_name': 1,
 		'content_type': 1,
 		'content_ids': 1,
@@ -267,6 +399,7 @@ var supported_params = {
 	'LeadPinterest': {
 		'value': 1,
 		'currency': 1,
+		'predicted_ltv': 0,
 		'content_name': 1,
 		'content_type': 0,
 		'content_ids': 0,
@@ -280,6 +413,7 @@ var supported_params = {
 	'CompleteRegistrationPinterest': {
 		'value': 1,
 		'currency': 1,
+		'predicted_ltv': 0,
 		'content_name': 1,
 		'content_type': 0,
 		'content_ids': 0,
@@ -293,6 +427,7 @@ var supported_params = {
 	'ViewContentSnapchat': {
 		'value': 0,
 		'currency': 1,
+		'predicted_ltv': 0,
 		'content_name': 0,
 		'content_type': 0,
 		'content_ids': 0,
@@ -306,6 +441,7 @@ var supported_params = {
 	'PurchaseSnapchat': {
 		'value': 0,
 		'currency': 1,
+		'predicted_ltv': 0,
 		'content_name': 0,
 		'content_type': 0,
 		'content_ids': 0,
@@ -320,6 +456,7 @@ var supported_params = {
 	'AddToCartSnapchat': {
 		'value': 0,
 		'currency': 1,
+		'predicted_ltv': 0,
 		'content_name': 0,
 		'content_type': 0,
 		'content_ids': 0,
@@ -334,6 +471,7 @@ var supported_params = {
 	'AddToWishlistSnapchat': {
 		'value': 0,
 		'currency': 1,
+		'predicted_ltv': 0,
 		'content_name': 0,
 		'content_type': 0,
 		'content_ids': 0,
@@ -347,6 +485,7 @@ var supported_params = {
 	'InitiateCheckoutSnapchat': {
 		'value': 0,
 		'currency': 1,
+		'predicted_ltv': 0,
 		'content_name': 0,
 		'content_type': 0,
 		'content_ids': 0,
@@ -360,6 +499,7 @@ var supported_params = {
 	'AddPaymentInfoSnapchat': {
 		'value': 0,
 		'currency': 1,
+		'predicted_ltv': 0,
 		'content_name': 0,
 		'content_type': 0,
 		'content_ids': 0,
@@ -373,6 +513,7 @@ var supported_params = {
 	'AddPaymentInfoGA': {
 		'value': 1,
 		'currency': 1,
+		'predicted_ltv': 0,
 		'content_name': 0,
 		'content_type': 0,
 		'content_ids': 0,
@@ -386,6 +527,7 @@ var supported_params = {
 	'AddToCartGA': {
 		'value': 1,
 		'currency': 1,
+		'predicted_ltv': 0,
 		'content_name': 0,
 		'content_type': 0,
 		'content_ids': 0,
@@ -399,6 +541,7 @@ var supported_params = {
 	'AddToWishlistGA': {
 		'value': 1,
 		'currency': 1,
+		'predicted_ltv': 0,
 		'content_name': 0,
 		'content_type': 0,
 		'content_ids': 0,
@@ -412,6 +555,7 @@ var supported_params = {
 	'InitiateCheckoutGA': {
 		'value': 1,
 		'currency': 1,
+		'predicted_ltv': 0,
 		'content_name': 0,
 		'content_type': 0,
 		'content_ids': 0,
@@ -425,6 +569,7 @@ var supported_params = {
 	'ViewContentGA': {
 		'value': 1,
 		'currency': 1,
+		'predicted_ltv': 0,
 		'content_name': 0,
 		'content_type': 0,
 		'content_ids': 0,
@@ -438,6 +583,7 @@ var supported_params = {
 	'PurchaseGA': {
 		'value': 1,
 		'currency': 1,
+		'predicted_ltv': 0,
 		'content_name': 0,
 		'content_type': 0,
 		'content_ids': 0,
@@ -452,6 +598,7 @@ var supported_params = {
 	'custom': {
 		'value': 0,
 		'currency': 0,
+		'predicted_ltv': 0,
 		'content_name': 0,
 		'content_type': 0,
 		'content_ids': 0,
@@ -634,11 +781,14 @@ jQuery(document).ready(function($){
 		$('.fca-pc-status').val('')
 		$('.fca-pc-value').val('')
 		$('.fca-pc-currency').val('')
+		$('.fca-pc-predicted_ltv').val('')
 		$('.fca-pc-event_name' ).val('')
 		
 		$('#fca-pc-modal-post-trigger-input').val('').trigger( 'change' )
 		$('#fca-pc-modal-css-trigger-input').val('')
 		$('#fca-pc-modal-url-trigger-input').val('')
+		$('#fca-pc-modal-exact_url-trigger-input').val('')
+		
 		$('#fca-pc-modal-delay-input').val(0)
 		$('#fca-pc-modal-scroll-input').val(0)
 
@@ -648,7 +798,8 @@ jQuery(document).ready(function($){
 		$('#fca-pc-event-pixel-type-span').text("Facebook")
 		$('#fca-pc-modal-event-input').val('ViewContent').trigger( 'change' )
 		//SET VISIBILITY BY TRIGGERING SHOW/HIDE CLICK HANDLER
-		$('.fca-pc-param-toggle').not(':visible').trigger('click')
+		$('.fca-pc-param-toggle').not(':visible').trigger('click') 
+		
 		
 		$('#fca-pc-event-modal').show()
 		$('#fca-pc-overlay').show()
@@ -669,11 +820,14 @@ jQuery(document).ready(function($){
 		$('.fca-pc-status').val('')
 		$('.fca-pc-value').val('')
 		$('.fca-pc-currency').val('')
+		$('.fca-pc-predicted_ltv').val('')
 		$('.fca-pc-event_name' ).val('')
 		
 		$('#fca-pc-modal-post-trigger-input').val('').trigger( 'change' )
 		$('#fca-pc-modal-css-trigger-input').val('')
 		$('#fca-pc-modal-url-trigger-input').val('')
+		$('#fca-pc-modal-exact_url-trigger-input').val('')
+		
 		$('#fca-pc-modal-delay-input').val(0)
 		$('#fca-pc-modal-scroll-input').val(0)
 
@@ -703,11 +857,14 @@ jQuery(document).ready(function($){
 		$('.fca-pc-status').val('')
 		$('.fca-pc-value').val('')
 		$('.fca-pc-currency').val('')
+		$('.fca-pc-predicted_ltv').val('')
 		$('.fca-pc-event_name' ).val('')
 		
 		$('#fca-pc-modal-post-trigger-input').val('').trigger( 'change' )
 		$('#fca-pc-modal-css-trigger-input').val('')
 		$('#fca-pc-modal-url-trigger-input').val('')
+		$('#fca-pc-modal-exact_url-trigger-input').val('')
+		
 		$('#fca-pc-modal-delay-input').val(0)
 		$('#fca-pc-modal-scroll-input').val(0)
 
@@ -735,11 +892,14 @@ jQuery(document).ready(function($){
 		$('.fca-pc-status').val('')
 		$('.fca-pc-value').val('')
 		$('.fca-pc-currency').val('')
+		$('.fca-pc-predicted_ltv').val('')
 		$('.fca-pc-event_name' ).val('')
 		
 		$('#fca-pc-modal-post-trigger-input').val('').trigger( 'change' )
 		$('#fca-pc-modal-css-trigger-input').val('')
 		$('#fca-pc-modal-url-trigger-input').val('')
+		$('#fca-pc-modal-exact_url-trigger-input').val('')
+		
 		$('#fca-pc-modal-delay-input').val(0)
 		$('#fca-pc-modal-scroll-input').val(0)
 
@@ -761,11 +921,14 @@ jQuery(document).ready(function($){
 
 		//SET DEFAULTS
 		$('.fca-pc-currency').val('')
+		$('.fca-pc-predicted_ltv').val('')
 		$('.fca-pc-event_name' ).val('')
 		
 		$('#fca-pc-modal-post-trigger-input').val('').trigger( 'change' )
 		$('#fca-pc-modal-css-trigger-input').val('')
 		$('#fca-pc-modal-url-trigger-input').val('')
+		$('#fca-pc-modal-exact_url-trigger-input').val('')
+		
 		$('#fca-pc-modal-delay-input').val(0)
 		$('#fca-pc-modal-scroll-input').val(0)
 
@@ -797,6 +960,14 @@ jQuery(document).ready(function($){
 			'AddPaymentInfo',
 			'Purchase',
 			'CompleteRegistration',
+			'Contact',
+			'CustomizeProduct',
+			'Donate',
+			'FindLocation',
+			'Schedule',
+			'StartTrial',
+			'Subscribe',
+			'SubmitApplication',
 			'custom'
 		]
 		
@@ -1200,6 +1371,14 @@ jQuery(document).ready(function($){
 					$('#fca-pc-modal-url-trigger-input').closest('tr').find('.fca_pc_tooltip').tooltipster('show')
 					valid = false	
 				}
+				break	
+				
+			case 'exact_url':
+				selected = $('#fca-pc-modal-exact_url-trigger-input').val()
+				if( selected.length === 0 ) {
+					$('#fca-pc-modal-exact_url-trigger-input').closest('tr').find('.fca_pc_tooltip').tooltipster('show')
+					valid = false	
+				}
 				break			
 			
 		}
@@ -1241,6 +1420,10 @@ jQuery(document).ready(function($){
 
 			case 'url':
 				fbEvent.trigger = $('#fca-pc-modal-url-trigger-input').val()
+				break
+				
+			case 'exact_url':
+				fbEvent.trigger = $('#fca-pc-modal-exact_url-trigger-input').val()
 				break
 
 			default:
@@ -1309,6 +1492,7 @@ jQuery(document).ready(function($){
 		$('.fca-active-param').removeClass('fca-active-param')
 		$('.fca-required-param').removeClass('fca-required-param')
 		$('.fca_pc_tooltip').tooltipster('hide')
+		$('#fca-pc-hide-param').trigger('click')
 
 		//HIDE TOOLTIPS
 		$('#fca_pc_tooltip_viewcontent, #fca_pc_tooltip_lead').hide()
@@ -1331,7 +1515,7 @@ jQuery(document).ready(function($){
 		}
 		
 		//MAYBE SHOW THE TIME DELAY & SCROLL % OPTIONS
-		if ( $('#fca-pc-modal-trigger-type-input').val() === 'post' ) {
+		if ( $('#fca-pc-modal-trigger-type-input').val() === 'post' || $('#fca-pc-modal-trigger-type-input').val() === 'exact_url' ) {
 			$('#fca-pc-modal-delay-input, #fca-pc-modal-scroll-input').closest('tr').show()
 			$('#fca_pc_tooltip_viewcontent').show()
 		} else {
@@ -1414,7 +1598,7 @@ jQuery(document).ready(function($){
 		//HIDE SELECT2 - BUGGY WHEN HIDING
 		$('.fca_pc_multiselect').select2('close')
 
-		$('#fca-pc-post-input-tr, #fca-pc-css-input-tr, #fca-pc-url-input-tr').hide()
+		$('#fca-pc-post-input-tr, #fca-pc-css-input-tr, #fca-pc-url-input-tr, #fca-pc-exact_url-input-tr').hide()
 		$('#fca-pc-modal-event-input').trigger( 'change' )
 
 		$('#fca-pc-' + $(this).val() + '-input-tr').show()
@@ -1809,7 +1993,7 @@ jQuery(document).ready(function($){
 
 			//SET PARAMS
 			for ( var eventParam in event.parameters ) {
-				$( '#fca-pc-add-custom-param' ).trigger('click')
+				$( '#fca-pc-add-custom-param' ).trigger('click') 
 				$( '.fca-pc-input-parameter-name' ).last().val( eventParam )
 				$( '.fca-pc-input-parameter-value' ).last().val( event.parameters[eventParam] )
 			}
@@ -1845,6 +2029,10 @@ jQuery(document).ready(function($){
 
 			case 'url':
 				$('#fca-pc-modal-url-trigger-input').val( event.trigger )
+				break
+				
+			case 'exact_url':
+				$('#fca-pc-modal-exact_url-trigger-input').val( event.trigger )
 				break
 		}
 		

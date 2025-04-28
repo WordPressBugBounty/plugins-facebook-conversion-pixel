@@ -119,42 +119,50 @@ function fca_pc_settings_page() {
 function fca_pc_add_event_form() {
 
 	$events = array(
-		'ViewContent' => 'ViewContent',
-		'Lead' => 'Lead',
+		'AddPaymentInfo' => 'AddPaymentInfo',
 		'AddToCart' => 'AddToCart',
 		'AddToWishlist' => 'AddToWishlist',
-		'InitiateCheckout' => 'InitiateCheckout',
-		'AddPaymentInfo' => 'AddPaymentInfo',
-		'Purchase' => 'Purchase',
 		'CompleteRegistration' => 'CompleteRegistration',
-			
-		'ViewContentTiktok' => 'ViewContent',
+		'Contact' => 'Contact',
+		'CustomizeProduct' => 'CustomizeProduct',
+		'Donate' => 'Donate',
+		'FindLocation' => 'FindLocation',
+		'InitiateCheckout' => 'InitiateCheckout',
+		'Lead' => 'Lead',
+		'Purchase' => 'Purchase',
+		'Schedule' => 'Schedule',
+		'StartTrial' => 'StartTrial',
+		'SubmitApplication' => 'SubmitApplication',
+		'Subscribe' => 'Subscribe',
+		'ViewContent' => 'ViewContent',
+		
+		'AddPaymentInfoTiktok' => 'AddPaymentInfo',
 		'AddToCartTiktok' => 'AddToCart',
 		'AddToWishlistTiktok' => 'AddToWishlist',
-		'InitiateCheckoutTiktok' => 'InitiateCheckout',
-		'AddPaymentInfoTiktok' => 'AddPaymentInfo',
-		'PurchaseTiktok' => 'CompletePayment',
 		'CompleteRegistrationTiktok' => 'CompleteRegistration',
+		'InitiateCheckoutTiktok' => 'InitiateCheckout',
+		'PurchaseTiktok' => 'CompletePayment',
+		'ViewContentTiktok' => 'ViewContent',
 		
-		'ViewContentSnapchat' => 'VIEW_CONTENT',
-		'AddToCartSnapchat' => 'ADD_CART',
-		'InitiateCheckoutSnapchat' => 'START_CHECKOUT',
 		'AddPaymentInfoSnapchat' => 'ADD_BILLING',
+		'AddToCartSnapchat' => 'ADD_CART',
 		'AddToWishlistSnapchat' => 'ADD_TO_WISHLIST',
+		'InitiateCheckoutSnapchat' => 'START_CHECKOUT',
 		'PurchaseSnapchat' => 'PURCHASE',
+		'ViewContentSnapchat' => 'VIEW_CONTENT',
 		
-		'ViewContentPinterest' => 'PageVisit',
 		'AddToCartPinterest' => 'AddToCart',
-		'PurchasePinterest' => 'Checkout',
 		'CompleteRegistrationPinterest' => 'Signup',
 		'LeadPinterest' => 'Lead',
+		'PurchasePinterest' => 'Checkout',
+		'ViewContentPinterest' => 'PageVisit',
 		
-		'ViewContentGA' => 'view_item',
 		'AddToCartGA' => 'add_to_cart',
+		'AddPaymentInfoGA' => 'add_payment_info',
 		'AddToWishlistGA' => 'add_to_wishlist',
 		'InitiateCheckoutGA' => 'begin_checkout',
-		'AddPaymentInfoGA' => 'add_payment_info',
 		'PurchaseGA' => 'purchase',
+		'ViewContentGA' => 'view_item',
 	);
 
 	$triggers = fca_pc_get_post_triggers();
@@ -164,6 +172,7 @@ function fca_pc_add_event_form() {
 		'css' => 'Click on Element',
 		'hover' => 'Hover over Element',
 		'url' => 'URL Click',
+		'exact_url' => 'Exact URL Visit',
 	);
 	
 	
@@ -190,6 +199,12 @@ function fca_pc_add_event_form() {
 				<th><?php esc_attr_e( 'URL Click', 'facebook-conversion-pixel' ); echo fca_pc_tooltip( esc_attr__( 'Enter the URL you wish to trigger the event on click.', 'facebook-conversion-pixel' ) ) ?></th>
 				<td>
 					<input id='fca-pc-modal-url-trigger-input' type='url' placeholder='https://fatcatapps.com' class='fca-pc-input-text fca-pc-url-trigger' style='width: 100%'>
+				</td>
+			</tr>
+			<tr id='fca-pc-exact_url-input-tr'>
+				<th><?php esc_attr_e( 'Exact URL Visit', 'facebook-conversion-pixel' ); echo fca_pc_tooltip( esc_attr__( 'Enter the URL you wish to trigger the event on visit.', 'facebook-conversion-pixel' ) ) ?></th>
+				<td>
+					<input id='fca-pc-modal-exact_url-trigger-input' type='url' placeholder='https://fatcatapps.com' class='fca-pc-input-text fca-pc-exact_url-trigger' style='width: 100%'>
 				</td>
 			</tr>
 			<tr id='fca-pc-post-input-tr'>
@@ -257,6 +272,10 @@ function fca_pc_event_parameters () {
 		<tr class='fca-pc-param-row' id='fca_pc_param_currency'>
 			<th>currency:<span class='fca-required-param-tooltip'><?php echo fca_pc_tooltip( esc_attr__( 'E.g. USD, EUR or JPY. This field is required.', 'facebook-conversion-pixel' ) ) ?></span></th>
 			<td><?php echo fca_pc_input( 'currency', '', '', 'text' ) ?></td>
+		</tr>
+		<tr class='fca-pc-param-row' id='fca_pc_param_predicted_ltv'>
+			<th>predicted_ltv:<span class='fca-required-param-tooltip'><?php echo fca_pc_tooltip( esc_attr__( 'Predicted lifetime value of a subscriber as defined by the advertiser and expressed as an exact value. This field is required.', 'facebook-conversion-pixel' ) ) ?></span></th>
+			<td><?php echo fca_pc_input( 'predicted_ltv', '', '', 'text' ) ?></td>
 		</tr>
 		<tr class='fca-pc-param-row' id='fca_pc_param_content_name'>
 			<th>content_name:</th>
@@ -413,7 +432,7 @@ function fca_pc_add_pixel_form() {
 				</td>
 			</tr>
 			<tr id='fca-pc-test-input-tr'>
-				<th><?php esc_attr_e( 'Test Code', 'facebook-conversion-pixel' ); echo fca_pc_tooltip( esc_attr__( 'Only for testing Conversions API connectivity, remove this when going live.', 'facebook-conversion-pixel' ) ) ?></th>
+				<th><?php esc_attr_e( 'Test Code', 'facebook-conversion-pixel' ); echo fca_pc_tooltip( esc_attr__( 'Test Conversions API connectivity (found in Test Events in your Facebook Events Manager). Remove this when going live!', 'facebook-conversion-pixel' ) ) ?></th>
 				<td>
 					<input id='fca-pc-modal-test-input' type='text' placeholder='optional - e.g. TEST12345' class='fca-pc-input-text' style='width: 100%'>
 				</td>
@@ -484,7 +503,7 @@ function fca_pc_add_pixel_form() {
 				</td>
 			</tr>				
 		</table>
-		<span id="fca_pc_capi_info" class="fca_pc_hint"><?php esc_attr_e( 'Important: Even with the Conversions API active, events will also be sent through the Conversions Pixel. In case the Pixel gets blocked by an ad blocker the Conversions API will kick in and make sure the event is still logged and sent to Facebook' , 'facebook-conversion-pixel' ); ?><br></span> 
+		<span id="fca_pc_capi_info" class="fca_pc_hint"><?php esc_attr_e( 'Important: Even with the Conversions API active, events will also be sent through the Conversions Pixel. In case the Pixel gets blocked by an ad blocker, the Conversions API will kick in and make sure the event is still logged and sent to Facebook.' , 'facebook-conversion-pixel' ); ?><br></span> 
 		<br>
 		<button type='button' id='fca-pc-pixel-save' class='button button-primary' style='margin-right: 8px'><?php esc_attr_e( 'Save', 'facebook-conversion-pixel' ) ?></button>
 		
