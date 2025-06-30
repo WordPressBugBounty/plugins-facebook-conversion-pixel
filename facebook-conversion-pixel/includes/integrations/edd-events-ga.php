@@ -60,9 +60,11 @@ function fca_pc_edd_format_cart_data_ga( $payment_id = false, $extra_params = fa
 		} else {
 			$value = $value + $download->get_price();
 		}
+		
 		$i = array(
 			'item_id' => $item['id'],
 			'item_name' => esc_html( strip_tags( get_the_title( $item['id'] ) ) ),
+			'price' => $download->get_price(),
 		);
 		
 		$category = get_the_terms( $item['id'], 'download_category' );

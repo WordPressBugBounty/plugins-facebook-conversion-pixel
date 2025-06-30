@@ -8,7 +8,7 @@
 	Author: Fatcat Apps
 	Author URI: https://fatcatapps.com/
 	License: GPLv2
-	Version: 3.1.0
+	Version: 3.1.1
 */
 
 
@@ -29,9 +29,9 @@ if ( !defined( 'FCA_PC_PLUGIN_DIR' ) ) {
 	define( 'FCA_PC_PLUGIN_NAME', 'Pixel Cat Premium: ' . FCA_PC_PLUGIN_PACKAGE );
 
 	if ( FCA_PC_DEBUG ) {
-		define( 'FCA_PC_PLUGIN_VER', '3.0.' . time() );
+		define( 'FCA_PC_PLUGIN_VER', '3.1.' . time() );
 	} else {
-		define( 'FCA_PC_PLUGIN_VER', '3.1.0' );
+		define( 'FCA_PC_PLUGIN_VER', '3.1.1' );
 	}
 
 	//LOAD CORE

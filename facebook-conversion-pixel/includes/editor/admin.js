@@ -630,6 +630,7 @@ jQuery(document).ready(function($){
 			'#fca-pc-modal-scroll-input, ' +
 			'#fca-pc-add-custom-param, ' +
 			'.fca-pc-woo_extra_params, ' +
+			'.fca-pc-woo_order_cookie, ' +
 			'.fca-pc-woo_delay, ' +
 			'.fca-pc-edd_extra_params, ' +
 			'.fca-pc-edd_delay, ' +

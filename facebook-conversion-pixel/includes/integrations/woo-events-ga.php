@@ -97,10 +97,14 @@ function fca_pc_initiate_checkout_ga( $options ) {
 			
 			$value = $value + $line_total + $line_tax;
 			$id = $woo_id_mode === 'post_id' ? $product_id : wc_get_product( $product_id )->get_sku();
+			$quantity = empty( $item['quantity'] ) ? 1 : $item['quantity'];
+			$item_price = ($line_total + $line_tax) / $quantity;
 			
 			$item = array(
 				'item_id' => $id,
 				'item_name' => get_the_title( $product_id ),
+				'price' => $item_price,
+				'quantity' => $quantity,
 			);
 			
 			$category = get_the_terms( $product_id, 'product_cat' );
@@ -150,8 +154,6 @@ function fca_pc_purchase_ga( $options ) {
 		$order_id = isset( $wp->query_vars['order-received'] ) ? intval( $wp->query_vars['order-received'] ) : intval( $wp->query_vars['order'] );
 		$order = wc_get_order( $order_id );
 		
-			
-		
 		$woo_id_mode = empty( $options['woo_product_id'] ) ? 'post_id' : $options['woo_product_id'];
 		$woo_extra_params = empty( $options['woo_extra_params'] ) ? false : true;
 		
@@ -160,12 +162,18 @@ function fca_pc_purchase_ga( $options ) {
 			$items = array();
 			
 			forEach ( $order->get_items() as $item ) {
-				$value = $value + $item['line_total'] + $item['line_tax'];
+				$line_total = empty( $item['line_total'] ) ? 0 : $item['line_total'];
+				$line_tax = empty( $item['line_tax'] ) ? 0 : $item['line_tax'];
+				$value = $value + $line_total + $line_tax;
 				$id = $woo_id_mode === 'post_id' ? $item['product_id'] : wc_get_product( $item['product_id'] )->get_sku();
+				$quantity = empty( $item['quantity'] ) ? 1 : $item['quantity'];
+				$item_price = ($line_total + $line_tax) / $quantity;
 				
 				$i = array(
 					'item_id' => $id,
 					'item_name' => esc_html( strip_tags( get_the_title( $item['product_id'] ) ) ),
+					'price' => $item_price,
+					'quantity' => $quantity,
 				);
 								
 				$category = get_the_terms( $item['product_id'], 'product_cat' );
@@ -192,10 +200,10 @@ function fca_pc_purchase_ga( $options ) {
 			}
 			
 			$ga_data = array(
+				'transaction_id' => $order_id,
 				'value' => $value,
 				'currency' => get_woocommerce_currency(),
 				'items' => $items,
-				'transaction_id' => $order_id,
 			);
 			
 			if ( $woo_extra_params ) {

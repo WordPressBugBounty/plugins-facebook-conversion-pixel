@@ -149,8 +149,8 @@ img[src=''] {
 
 #fca_pc_main_form .twoup {
 	display: grid;
-	grid-template-columns: 180px 1fr;
-	grid-column-gap: 80px;
+	grid-template-columns: 128px 1fr;
+	grid-column-gap: 64px;
 	padding-top: 20px;
 }
 
@@ -290,7 +290,7 @@ img[src=''] {
 .fca_pc_integrations_table th {
 	text-align: left;
 	vertical-align: top;
-	width: 180px;
+	width: 288px;
 	font-weight: 600;
 	cursor: pointer;
 }

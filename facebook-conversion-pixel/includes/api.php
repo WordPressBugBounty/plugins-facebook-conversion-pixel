@@ -93,6 +93,8 @@ function fca_pc_fb_api_call( $pixel, $capi_token, $test_code ){
 	$event_name = sanitize_text_field( $_POST['event_name'] );
 	$event_time = sanitize_text_field( $_POST['event_time'] );
 	$external_id = sanitize_text_field( $_POST['external_id'] );
+	$fbc = empty( $_COOKIE['_fbc'] ) ? '' : sanitize_text_field( $_COOKIE['_fbc'] );
+	$click_id = sanitize_text_field( $_POST['click_id'] );
 	$event_id = sanitize_text_field( $_POST['event_id'] );
 	$ip_addr = fca_pc_get_client_ip();
 	$client_user_agent = sanitize_text_field( $_POST['client_user_agent'] );
@@ -108,13 +110,18 @@ function fca_pc_fb_api_call( $pixel, $capi_token, $test_code ){
 		'client_user_agent' => $client_user_agent
 	);
 	
+	if( $fbc ) {
+		$user_data->fbc = $fbc;
+	} else if ( $click_id ) {
+		$fbc_value = 'fb.1.' . ( 1000 * $event_time ) . '.' . $click_id;
+		$user_data->fbc = $fbc_value;
+		setcookie( '_fbc', $fbc_value, ( $event_time + 90 * DAY_IN_SECONDS ) );
+	}
+	
 	if( $advanced_matching ) {
 		$user_data = fca_pc_advanced_matching( true );
-		$user_data['external_id'] = $external_id;
-		$user_data['client_ip_address'] = $ip_addr;
-		$user_data['client_user_agent'] = $client_user_agent;
 	}
-		
+			
 	$fb_data = array(
 		'action_source' => 'website',
 		'event_name' => $event_name,
@@ -127,7 +134,7 @@ function fca_pc_fb_api_call( $pixel, $capi_token, $test_code ){
 	if( $custom_data ) {
 		$fb_data['custom_data'] = $custom_data;
 	}
-		
+	
 	$body = (object) array(
 		'data' => array( $fb_data )
 	);

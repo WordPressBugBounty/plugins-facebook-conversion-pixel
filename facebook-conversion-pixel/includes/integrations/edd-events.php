@@ -54,23 +54,26 @@ function fca_pc_edd_purchase( $payment_id ) {
 	$options = get_option( 'fca_pc', array() );
 	$edd_extra_params = empty( $options['edd_extra_params'] ) ? false : true;
 	$advanced_matching = empty ( $options['advanced_matching'] ) ? false : true;
-	
 	$cart = fca_pc_edd_format_cart_data( $payment_id, $edd_extra_params );
+	$fbc = empty( $_COOKIE['_fbc'] ) ? '' : sanitize_text_field( $_COOKIE['_fbc'] );
+	
 	setcookie( 'fca_pc_edd_purchase', json_encode( $cart ), 0, '/' );
+	
 	if ( $advanced_matching ) {
 		$payment = new EDD_Payment( $payment_id );
-		$user_data = array (
-			'email' => $payment->email,
-			'fn' 	=> $payment->first_name,
-			'ln' 	=> $payment->last_name,
-			'ct' 	=> $payment->address['city'],
-			'st' 	=> $payment->address['state'],
-			'zp' 	=> $payment->address['zip']
-		);
-		
 		//USER DATA SHOULD BE LOWERCASE https://developers.facebook.com/docs/facebook-pixel/pixel-with-ads/conversion-tracking#advanced_match
+		$user_data = array (
+			'email' => strtolower( $payment->email ),
+			'fn' 	=> strtolower( $payment->first_name ),
+			'ln' 	=> strtolower( $payment->last_name ),
+			'ct' 	=> strtolower( $payment->address['city'] ),
+			'st' 	=> strtolower( $payment->address['state'] ),
+			'zp' 	=> strtolower( $payment->address['zip'] ),
+			'country' 	=> strtolower( $payment->address['country'] ),
+			'fbc' => $fbc
+		);	
 
-		setcookie( 'fca_pc_advanced_matching', json_encode( array_map( 'strtolower', array_filter( $user_data ) ) ), 0, '/' );
+		setcookie( 'fca_pc_advanced_matching', json_encode( array_filter( $user_data ) ), 0, '/' );
 
 	}
 }

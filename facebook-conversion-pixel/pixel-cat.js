@@ -176,7 +176,16 @@ jQuery( document ).ready(function($) {
 		}
 
 		if ( typeof fcaPcWooPurchase !== 'undefined' ) {
-			fca_pc_trigger_event( 'track', 'Purchase', fcaPcWooPurchase )
+			if( fcaPcOptions.woo_order_cookie ) {
+				if( get_cookie( 'fcaPcWooPurchase_' + fcaPcWooPurchase.transaction_id ) ) {
+					//do nothing
+				} else {
+					fca_pc_trigger_event( 'track', 'Purchase', fcaPcWooPurchase )
+					set_cookie( 'fcaPcWooPurchase_' + fcaPcWooPurchase.transaction_id, true, 365 )
+				}
+			} else {
+				fca_pc_trigger_event( 'track', 'Purchase', fcaPcWooPurchase )				
+			}
 		}
 		
 		if ( typeof fcaPcWooProduct !== 'undefined' ) {
@@ -208,7 +217,18 @@ jQuery( document ).ready(function($) {
 		}
 
 		if ( typeof fcaPcWooPurchaseTiktok !== 'undefined' ) {
-			fca_pc_trigger_event( 'track', 'PurchaseTiktok', fcaPcWooPurchaseTiktok )
+			
+			if( fcaPcOptions.woo_order_cookie ) {
+				if( get_cookie( 'fcaPcWooPurchaseTiktok_' + fcaPcWooPurchaseTiktok.transaction_id ) ) {
+					//do nothing
+				} else {
+					fca_pc_trigger_event( 'track', 'PurchaseTiktok', fcaPcWooPurchaseTiktok )
+					set_cookie( 'fcaPcWooPurchaseTiktok_' + fcaPcWooPurchaseTiktok.transaction_id, true, 365 )
+				}
+			} else {
+				fca_pc_trigger_event( 'track', 'PurchaseTiktok', fcaPcWooPurchaseTiktok )				
+			}
+			
 		}
 		
 		if ( typeof fcaPcWooProductTiktok !== 'undefined' ) {
@@ -231,7 +251,16 @@ jQuery( document ).ready(function($) {
 		}
 
 		if ( typeof fcaPcWooPurchasePinterest !== 'undefined' ) {
-			fca_pc_trigger_event( 'track', 'PurchasePinterest', fcaPcWooPurchasePinterest )
+			if( fcaPcOptions.woo_order_cookie ) {
+				if( get_cookie( 'fcaPcWooPurchasePinterest_' + fcaPcWooPurchasePinterest.transaction_id ) ) {
+					//do nothing
+				} else {
+					fca_pc_trigger_event( 'track', 'PurchasePinterest', fcaPcWooPurchasePinterest )
+					set_cookie( 'fcaPcWooPurchasePinterest_' + fcaPcWooPurchasePinterest.transaction_id, true, 365 )
+				}
+			} else {
+				fca_pc_trigger_event( 'track', 'PurchasePinterest', fcaPcWooPurchasePinterest )				
+			}
 		}
 
 		if ( typeof fcaPcWooProductPinterest !== 'undefined' ) {
@@ -259,7 +288,16 @@ jQuery( document ).ready(function($) {
 		}
 
 		if ( typeof fcaPcWooPurchaseSnapchat !== 'undefined' ) {
-			fca_pc_trigger_event( 'track', 'PurchaseSnapchat', fcaPcWooPurchaseSnapchat )
+			if( fcaPcOptions.woo_order_cookie ) {
+				if( get_cookie( 'fcaPcWooPurchaseSnapchat_' + fcaPcWooPurchaseSnapchat.transaction_id ) ) {
+					//do nothing
+				} else {
+					fca_pc_trigger_event( 'track', 'PurchaseSnapchat', fcaPcWooPurchaseSnapchat )
+					set_cookie( 'fcaPcWooPurchaseSnapchat_' + fcaPcWooPurchaseSnapchat.transaction_id, true, 365 )
+				}
+			} else {
+				fca_pc_trigger_event( 'track', 'PurchaseSnapchat', fcaPcWooPurchaseSnapchat )				
+			}
 		}
 
 		if ( typeof fcaPcWooProductSnapchat !== 'undefined' ) {
@@ -291,7 +329,16 @@ jQuery( document ).ready(function($) {
 		}
 
 		if ( typeof fcaPcWooPurchaseGA !== 'undefined' ) {
-			fca_pc_trigger_event( 'track', 'PurchaseGA', fcaPcWooPurchaseGA )
+			if( fcaPcOptions.woo_order_cookie ) {
+				if( get_cookie( 'fcaPcWooPurchaseGA_' + fcaPcWooPurchaseGA.transaction_id ) ) {
+					//do nothing
+				} else {
+					fca_pc_trigger_event( 'track', 'PurchaseGA', fcaPcWooPurchaseGA )
+					set_cookie( 'fcaPcWooPurchaseGA_' + fcaPcWooPurchaseGA.transaction_id, true, 365 )
+				}
+			} else {
+				fca_pc_trigger_event( 'track', 'PurchaseGA', fcaPcWooPurchaseGA )				
+			}
 		}
 
 		if ( typeof fcaPcWooProductGA !== 'undefined' ) {
@@ -804,12 +851,13 @@ jQuery( document ).ready(function($) {
 		var event_params = params ? add_auto_event_params( params ) : null
 		
 		if( typeof( fbq ) !== 'undefined' ){
-									
+			
 			var eventID = fca_pc_generate_id()
 			var externalID = fca_pc_check_cookie()
 			var currentTime = new Date($.now()).toUTCString()
 			var GMT_time = new Date(currentTime).valueOf() / 1000
-					
+			var clickID = get_url_param( 'fbclid' )
+				
 			if ( name === 'trackCustom' && pixelType === 'Facebook' ) {				
 				fbq( name, action, event_params, { event_id: eventID, external_id: externalID }  )
 				
@@ -823,6 +871,7 @@ jQuery( document ).ready(function($) {
 							event_name: action,
 							event_time: GMT_time,
 							event_id: eventID,
+							click_id : clickID,
 							external_id: externalID,
 							client_user_agent: navigator.userAgent,
 							event_source_url: window.location.origin + window.location.pathname,
@@ -867,7 +916,8 @@ jQuery( document ).ready(function($) {
 								action: 'fca_pc_capi_event',
 								event_name: fb_action,
 								event_time: GMT_time,
-								event_id: eventID,
+								event_id: eventID,								
+								click_id : clickID,
 								external_id: externalID,
 								client_user_agent: navigator.userAgent,
 								event_source_url: window.location.origin + window.location.pathname,

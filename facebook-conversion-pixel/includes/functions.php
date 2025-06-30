@@ -403,6 +403,7 @@ function fca_pc_localize_pixel_options( $options ) {
 		'edd_delay' => empty( $options['edd_delay'] ) ? 0 : intVal($options['edd_delay']),
 		'woo_enabled' => fca_pc_woo_auto_events_enabled( $options ),
 		'woo_delay' => empty( $options['woo_delay'] ) ? 0 : intVal($options['woo_delay']),
+		'woo_order_cookie' => empty( $options['woo_order_cookie'] ) ? false : true,
 		'video_enabled' => empty( $options['video_events'] ) ? false : true,
 	);
 }
@@ -456,7 +457,12 @@ function fca_pc_get_active_events( $options ) {
 }
 
 function fca_pc_advanced_matching( $hashed = false ) {
-
+	
+	$ip_addr = fca_pc_get_client_ip();
+	$fbc = empty( $_COOKIE['_fbc'] ) ? '' : sanitize_text_field( $_COOKIE['_fbc'] );
+	$client_user_agent = empty( $_POST['client_user_agent'] ) ? '' : sanitize_text_field( $_POST['client_user_agent'] );
+	$external_id = empty( $_POST['external_id'] ) ? '' : sanitize_text_field( $_POST['external_id'] );
+			
 	if ( !empty( $_COOKIE['fca_pc_advanced_matching'] ) ) {
 		return stripslashes_deep( $_COOKIE['fca_pc_advanced_matching'] );
 	} else if ( is_user_logged_in() ) {
@@ -466,27 +472,37 @@ function fca_pc_advanced_matching( $hashed = false ) {
 		$fn = empty( $user->first_name ) ? $user->billing_first_name : $user->first_name;
 		$ln = empty( $user->last_name ) ? $user->billing_last_name : $user->last_name;
 		$user_data = array (
-			'em' => $user->user_email,
-			'fn' => $fn,
-			'ln' => $ln,
-			'ph' => $user->billing_phone,
-			'ct' => $user->billing_city,
-			'st' => $user->billing_state,
-			'zp' => $user->billing_postcode,
+			'em' => strtolower( $user->user_email ),
+			'fn' => strtolower( $fn ),
+			'ln' => strtolower( $ln ),
+			'ph' => strtolower( $user->billing_phone ),
+			'ct' => strtolower( $user->billing_city ),
+			'st' => strtolower( $user->billing_state ),
+			'zp' => strtolower( $user->billing_postcode ),
+			'country' => strtolower( $user->billing_country ),
+			'external_id' => $external_id,
+			'client_ip_address' => $ip_addr,
+			'client_user_agent' => $client_user_agent,
+			'fbc' => $fbc
 		);
-		
+				
 		if( $hashed ) {
-			return  array (
-				'em' => hash( 'sha256', $user->user_email ),
-				'fn' => hash( 'sha256', $fn ),
-				'ln' => hash( 'sha256', $ln ),
-				'ph' => hash( 'sha256', $user->billing_phone ),
-				'ct' => hash( 'sha256', $user->billing_city ),
-				'st' => hash( 'sha256', $user->billing_state ),
-				'zp' => hash( 'sha256', $user->billing_postcode ),
+			return array (
+				'em' => fca_pc_maybe_hash( $user_data['em'] ),
+				'fn' => fca_pc_maybe_hash( $user_data['fn'] ),
+				'ln' => fca_pc_maybe_hash( $user_data['ln'] ),
+				'ph' => fca_pc_maybe_hash( $user_data['ph'] ),
+				'ct' => fca_pc_maybe_hash( $user_data['ct'] ),
+				'st' => fca_pc_maybe_hash( $user_data['st'] ),
+				'zp' => fca_pc_maybe_hash( $user_data['zp'] ),
+				'country' => fca_pc_maybe_hash( $user_data['country'] ),
+				'external_id' => $external_id,
+				'client_ip_address' => $ip_addr,
+				'client_user_agent' => $client_user_agent,				
+				'fbc' => $fbc
 			);
 		}
-		return json_encode( array_map( 'strtolower', array_filter( $user_data ) ) );
+		return json_encode( array_filter( $user_data ) );
 
 	} else if ( function_exists( 'is_order_received_page' ) && is_order_received_page() ) {
 
@@ -495,29 +511,45 @@ function fca_pc_advanced_matching( $hashed = false ) {
 		$order = new WC_Order( $order_id );
 
 		$user_data = array (
-			'em' => $order->get_billing_email(),
-			'fn' => $order->get_billing_first_name(),
-			'ln' => $order->get_billing_last_name(),
-			'ct' => $order->get_billing_city(),
-			'st' => $order->get_billing_state(),
-			'zp' => $order->get_billing_postcode(),
+			'em' => strtolower( $order->get_billing_email() ),
+			'fn' => strtolower( $order->get_billing_first_name() ),
+			'ln' => strtolower( $order->get_billing_last_name() ),
+			'ct' => strtolower( $order->get_billing_city() ),
+			'st' => strtolower( $order->get_billing_state() ),
+			'zp' => strtolower( $order->get_billing_postcode() ),
+			'country' => strtolower( $order->get_billing_country() ),
+			'external_id' => $external_id,
+			'client_ip_address' => $ip_addr,
+			'client_user_agent' => $client_user_agent,
+			'fbc' => $fbc
 		);
-		
+				
 		if( $hashed ) {
-			return  array (
-				'em' => hash( 'sha256', $order->get_billing_email() ),
-				'fn' => hash( 'sha256', $order->get_billing_first_name() ),
-				'ln' => hash( 'sha256', $order->get_billing_last_name() ),
-				'ct' => hash( 'sha256', $order->get_billing_city() ),
-				'st' => hash( 'sha256', $order->get_billing_state() ),
-				'zp' => hash( 'sha256', $order->get_billing_postcode() ),
+			return array (
+				'em' => fca_pc_maybe_hash( $user_data['em'] ),
+				'fn' => fca_pc_maybe_hash( $user_data['fn'] ),
+				'ln' => fca_pc_maybe_hash( $user_data['ln'] ),
+				'ph' => fca_pc_maybe_hash( $user_data['ph'] ),
+				'ct' => fca_pc_maybe_hash( $user_data['ct'] ),
+				'st' => fca_pc_maybe_hash( $user_data['st'] ),
+				'zp' => fca_pc_maybe_hash( $user_data['zp'] ),
+				'country' => fca_pc_maybe_hash( $user_data['country'] ),
+				'external_id' => $external_id,
+				'client_ip_address' => $ip_addr,
+				'client_user_agent' => $client_user_agent,
+				'fbc' => $fbc
 			);
 		}
-		return json_encode( array_map( 'strtolower', array_filter( $user_data ) ) );
+		
+		return json_encode( array_filter( $user_data ) );
 
 	}
 
 	return false;
+}
+
+function fca_pc_maybe_hash( $string ) {
+	return empty( $string ) ? '' : hash( 'sha256', $string );
 }
 
 function fca_pc_encode_xml( $string ) {

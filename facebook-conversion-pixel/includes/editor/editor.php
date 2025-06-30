@@ -363,8 +363,8 @@ function fca_pc_event_tooltips(){
 function fca_pc_add_pixel_form() {
 
 	$types = array(
-		'Facebook Pixel' => 'Facebook Pixel',
 		'Conversions API' => 'Facebook Conversions API',
+		'Facebook Pixel' => 'Facebook Pixel',
 		'GA3' => 'Google Universal Analytics (GA3)',
 		'GA4' => 'Google Analytics (GA4)',
 		'Adwords' => 'Google Ads',
@@ -377,8 +377,8 @@ function fca_pc_add_pixel_form() {
 	
 	if( FCA_PC_PLUGIN_PACKAGE === 'Lite' ) {
 		$types = array(
-			'Facebook Pixel' => 'Facebook Pixel',
 			'Conversions API' => 'Facebook Conversions API',
+			'Facebook Pixel' => 'Facebook Pixel',
 			'GA3' => 'Google Universal Analytics (GA3)',
 			'GA4' => 'Google Analytics (GA4)',
 			'Custom Header Script' => 'Custom Header Script',
@@ -654,6 +654,7 @@ function fca_pc_settings_save() {
 	$data['ept_integration'] = empty( $_POST['fca_pc']['ept_integration'] ) ? '' : 'on';
 
 	$data['woo_integration'] = empty( $_POST['fca_pc']['woo_integration'] ) ? '' : 'on';
+	$data['woo_integration_ga'] = empty( $_POST['fca_pc']['woo_integration_ga'] ) ? '' : 'on';
 	$data['woo_feed'] = empty( $_POST['fca_pc']['woo_feed'] ) ? '' : 'on';
 	$data['woo_variations'] = empty( $_POST['fca_pc']['woo_variations'] ) ? '' : 'on';
 	$data['woo_excluded_categories'] = empty( $_POST['fca_pc']['woo_excluded_categories'] ) ? '' : sanitize_text_field( $_POST['fca_pc']['woo_excluded_categories'] );
@@ -878,6 +879,7 @@ function fca_pc_add_woo_integrations( $options ) {
 	$woo_snapchat_integration_on = empty( $options['woo_integration_snapchat'] ) ? '' : 'on';
 	$woo_tiktok_integration_on = empty( $options['woo_integration_tiktok'] ) ? '' : 'on';
 	$woo_extra_params = empty( $options['woo_extra_params'] ) ? '' : 'on';
+	$woo_order_cookie = empty( $options['woo_order_cookie'] ) ? '' : 'on';
 	$woo_delay = empty( $options['woo_delay'] ) ? 0 : intVal($options['woo_delay']);
 	$woo_feed_on = empty( $options['woo_feed'] ) ? '' : 'on';
 	$woo_include_variations = isset( $options['woo_variations'] ) ? $options['woo_variations'] : 'on';
@@ -916,23 +918,23 @@ function fca_pc_add_woo_integrations( $options ) {
 			<p><?php esc_attr_e( 'Automatically send WooCommerce events: Add&nbsp;To&nbsp;Cart, Add&nbsp;Payment&nbsp;Info, Purchase, View&nbsp;Content, Search, and Add&nbsp;to&nbsp;Wishlist.', 'facebook-conversion-pixel' ) ?></p>
 			<table class='fca_pc_integrations_table'>
 				<tr>
-					<th><?php esc_attr_e('WooCommerce events for Facebook Pixel', 'facebook-conversion-pixel') ?></th>
+					<th><?php esc_attr_e('WooCommerce Events for Facebook Pixel', 'facebook-conversion-pixel') ?></th>
 						<td><?php echo fca_pc_input( 'woo_integration', '', $woo_integration_on, 'checkbox' ) ?>
 				</tr>
 				<tr>
-					<th><?php esc_attr_e('WooCommerce events for Google&nbsp;Analytics', 'facebook-conversion-pixel') ?></th>
+					<th><?php esc_attr_e('WooCommerce Events for Google&nbsp;Analytics', 'facebook-conversion-pixel') ?></th>
 						<td><?php echo fca_pc_input( 'woo_integration_ga', '', $woo_ga_integration_on, 'checkbox' ) ?>
 				</tr>
 				<tr>
-					<th><?php echo esc_attr('WooCommerce events for Pinterest', 'facebook-conversion-pixel') . fca_sp_premium_only_link() ?></th>
+					<th><?php echo esc_attr('WooCommerce Events for Pinterest', 'facebook-conversion-pixel') . fca_sp_premium_only_link() ?></th>
 						<td><?php echo fca_pc_input( 'woo_integration_pinterest', '', $woo_pinterest_integration_on, 'checkbox' ) ?>
 				</tr>
 				<tr>
-					<th><?php echo esc_attr('WooCommerce events for Snapchat', 'facebook-conversion-pixel') . fca_sp_premium_only_link() ?></th>
+					<th><?php echo esc_attr('WooCommerce Events for Snapchat', 'facebook-conversion-pixel') . fca_sp_premium_only_link() ?></th>
 						<td><?php echo fca_pc_input( 'woo_integration_snapchat', '', $woo_snapchat_integration_on, 'checkbox' ) ?>
 				</tr>
 				<tr>
-					<th><?php echo esc_attr('WooCommerce events for TikTok', 'facebook-conversion-pixel') . fca_sp_premium_only_link() ?></th>
+					<th><?php echo esc_attr('WooCommerce Events for TikTok', 'facebook-conversion-pixel') . fca_sp_premium_only_link() ?></th>
 						<td><?php echo fca_pc_input( 'woo_integration_tiktok', '', $woo_tiktok_integration_on, 'checkbox' ) ?>
 				</tr>
 				<tr>
@@ -944,6 +946,11 @@ function fca_pc_add_woo_integrations( $options ) {
 					<th><?php echo esc_attr( 'Send Extra Info with Purchase Event', 'facebook-conversion-pixel' ) . fca_sp_premium_only_link() ?></th>
 						<td><?php echo fca_pc_input( 'woo_extra_params', '', $woo_extra_params, 'checkbox' ) ?>
 					<span class='fca_pc_hint'><?php esc_attr_e("Sends LTV (lifetime value), coupon codes (if used) and shipping info as parameters of your purchase event, so you can build better, more targeted custom audiences.", 'facebook-conversion-pixel' ) ?></span></td>
+				</tr>
+				<tr>
+					<th><?php echo esc_attr( 'Prevent Duplicate Purchase Events', 'facebook-conversion-pixel' ) . fca_sp_premium_only_link() ?></th>
+						<td><?php echo fca_pc_input( 'woo_order_cookie', '', $woo_order_cookie, 'checkbox' ) ?>
+					<span class='fca_pc_hint'><?php esc_attr_e("Sets a cookie to track whether a Purchase event for a given order ID has already been triggered. Helps prevent duplicate events if users refresh the page or visit again later.", 'facebook-conversion-pixel' ) ?></span></td>
 				</tr>
 				<tr>
 					<th><?php esc_attr_e( 'Product Feed', 'facebook-conversion-pixel' ) ?></th>

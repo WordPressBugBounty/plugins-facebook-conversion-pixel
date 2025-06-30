@@ -8,7 +8,7 @@ Requires at least: 4.0
 Tested up to: 6.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 3.1.0
+Stable tag: 3.1.1
 
 Facebook Pixel Management Made Easy. From Facebook retargeting to Google conversion tracking, this plugin includes everything you need to run successful Facebook and Google ads.
 
@@ -150,6 +150,11 @@ Pixel Cat - Conversion Pixel Manager will automatically detect your old settings
 
 
 == Changelog ==
+
+= Pixel Cat: Conversion Pixel Manager 3.1.1 =
+* Added Facebook Click ID parameter
+* Added option to prevent duplicate Purchase events
+* Small UI updates
 
 = Pixel Cat: Conversion Pixel Manager 3.1.0 =
 * Added additional Facebook (Meta) Standard Events: Contact, CustomizeProduct, Donate, FindLocation, Schedule, StartTrial, SubmitApplication, Subscribe

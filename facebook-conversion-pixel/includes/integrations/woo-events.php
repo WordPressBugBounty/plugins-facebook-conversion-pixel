@@ -131,6 +131,7 @@ function fca_pc_purchase( $options ) {
 			}
 			
 			$cart_data = array(
+				'transaction_id' => $order_id,
 				'value' => $value,
 				'currency' => get_woocommerce_currency(),
 				'content_name' => implode( ', ', $content_name),
