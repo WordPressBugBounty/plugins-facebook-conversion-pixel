@@ -53,35 +53,6 @@ function fca_pc_woo_add_to_cart_ga( $cart_item_key, $product_id, $quantity, $var
 }
 add_action( 'woocommerce_add_to_cart', 'fca_pc_woo_add_to_cart_ga', 10, 6 );
 
-function fca_pc_woo_ajax_add_to_cart_ga() {
-
-	$p = fca_pc_get_woo_product( sanitize_text_field( $_POST['product_id'] ) );
-
-	if ( $p ) {
-		
-		$options = get_option( 'fca_pc', array() );
-		$woo_id_mode = empty( $options['woo_product_id'] ) ? 'post_id' : $options['woo_product_id'];
-		$id = $woo_id_mode === 'post_id' ? $p->get_id() : $p->get_sku();
-		
-		$items = array(
-			'item_id' => $id,
-			'item_name' => $p->get_title(),
-		);
-		
-		$ga_data = array(
-			'value' => wc_get_price_to_display( $p ),
-			'currency' => get_woocommerce_currency(),
-			'items' => $items,
-		);
-		
-		wp_send_json_success( $ga_data );
-		
-	}
-
-}
-add_action( 'wp_ajax_fca_pc_woo_ajax_add_to_cart_ga', 'fca_pc_woo_ajax_add_to_cart_ga' );
-add_action( 'wp_ajax_nopriv_fca_pc_woo_ajax_add_to_cart_ga', 'fca_pc_woo_ajax_add_to_cart_ga' );
-
 function fca_pc_initiate_checkout_ga( $options ) {
 	if ( function_exists( 'is_checkout' ) && is_checkout() && !is_order_received_page() ) {
 		

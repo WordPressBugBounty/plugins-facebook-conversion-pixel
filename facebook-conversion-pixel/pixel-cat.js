@@ -138,6 +138,7 @@ jQuery( document ).ready(function($) {
 					'product_id': fcaPcPost.id
 				},
 				success: ( function( data ){
+					
 					if( data.success ) {
 						if( fca_pc_pixel_type_enabled( 'Facebook' ) || fca_pc_pixel_type_enabled( 'Conversions API' ) ) {							
 							fca_pc_trigger_event( 'track', 'AddToCart', data.facebook )
@@ -849,19 +850,17 @@ jQuery( document ).ready(function($) {
 	function fca_pc_trigger_event( name, action, params, pixelType ) {
 
 		var event_params = params ? add_auto_event_params( params ) : null
+		var currentTime = new Date($.now()).toUTCString()
+		var GMT_time = new Date(currentTime).valueOf() / 1000
+		var eventID = fca_pc_generate_id()
+		var externalID = fca_pc_check_cookie()
 		
 		if( typeof( fbq ) !== 'undefined' ){
 			
-			var eventID = fca_pc_generate_id()
-			var externalID = fca_pc_check_cookie()
-			var currentTime = new Date($.now()).toUTCString()
-			var GMT_time = new Date(currentTime).valueOf() / 1000
-			var clickID = get_url_param( 'fbclid' )
-				
 			if ( name === 'trackCustom' && pixelType === 'Facebook' ) {				
 				fbq( name, action, event_params, { event_id: eventID, external_id: externalID }  )
 				
-				if( fca_pc_pixel_type_enabled( 'Conversions API' ) ){
+				if( fcaPcOptions.capis.hasOwnProperty( 'Conversions API' ) ){
 					
 					$.ajax({
 						url: fcaPcOptions.ajax_url,
@@ -871,7 +870,7 @@ jQuery( document ).ready(function($) {
 							event_name: action,
 							event_time: GMT_time,
 							event_id: eventID,
-							click_id : clickID,
+							click_id : get_url_param( 'fbclid' ),
 							external_id: externalID,
 							client_user_agent: navigator.userAgent,
 							event_source_url: window.location.origin + window.location.pathname,
@@ -917,7 +916,7 @@ jQuery( document ).ready(function($) {
 								event_name: fb_action,
 								event_time: GMT_time,
 								event_id: eventID,								
-								click_id : clickID,
+								click_id :  get_url_param( 'fbclid' ),
 								external_id: externalID,
 								client_user_agent: navigator.userAgent,
 								event_source_url: window.location.origin + window.location.pathname,
@@ -931,9 +930,6 @@ jQuery( document ).ready(function($) {
 		}
 		
 		if( typeof( snaptr ) !== 'undefined' ){
-						
-			var eventID = fca_pc_generate_id()
-			var externalID = fca_pc_check_cookie()
 				
 			var events_map = new Map([
 				[ "PageViewSnapchat", "PAGE_VIEW" ],
@@ -957,28 +953,94 @@ jQuery( document ).ready(function($) {
 		if( typeof( ttq ) !== 'undefined' ){
 		
 			var events_map = new Map([
-					[ "PageViewTiktok", "PageView" ],
-					[ "ViewContentTiktok", "ViewContent" ],
-					[ "AddToCartTiktok", "AddToCart" ],				
-					[ "AddToWishlistTiktok", "AddToWishlist" ],			
-					[ "InitiateCheckoutTiktok", "InitiateCheckout" ],	
-					[ "AddPaymentInfoTiktok", "AddPaymentInfo" ],
-					[ "PurchaseTiktok", "CompletePayment" ],
-					[ "CompleteRegistrationTiktok", "CompleteRegistration" ],
-					
-					//[ "SearchTiktok", "Search" ],	
-					
-				])
+				[ "PageViewTiktok", "PageView" ],
+				[ "ViewContentTiktok", "ViewContent" ],
+				[ "AddToCartTiktok", "AddToCart" ],				
+				[ "AddToWishlistTiktok", "AddToWishlist" ],			
+				[ "InitiateCheckoutTiktok", "InitiateCheckout" ],	
+				[ "AddPaymentInfoTiktok", "AddPaymentInfo" ],
+				[ "PurchaseTiktok", "CompletePayment" ],
+				[ "CompleteRegistrationTiktok", "CompleteRegistration" ],
+				
+				//[ "SearchTiktok", "Search" ],	
+				
+			])
 			
 			var tiktok_action = events_map.get( action )
-
+			
+			//FORMAT CONTENT ID/CONTENTS FOR TIKTOK
+			if( event_params ) {
+				
+				var tiktok_event_params = JSON.parse( JSON.stringify( event_params ) )
+				tiktok_event_params.event_id = eventID
+				tiktok_event_params.content_id = event_params.content_ids.toString()
+				tiktok_event_params.content_ids = event_params.content_ids.toString()
+				
+				var tiktok_contents = {}
+				
+				;[
+					"content_id",
+					"content_name",					
+				].forEach(function(item){
+					if( tiktok_event_params.hasOwnProperty(item) ) {						
+						tiktok_contents[item] = tiktok_event_params[item]
+					}
+					
+				}) 
+				
+				tiktok_event_params.contents = [ tiktok_contents ]
+				
+				
+			}
+						
+			if ( name === 'trackCustom' && pixelType === 'TikTok' ) {
+				
+				ttq.track( action, tiktok_event_params )
+				
+				if( fcaPcOptions.capis.hasOwnProperty( 'TikTok' ) ) {
+				
+					$.ajax({
+						url: fcaPcOptions.ajax_url,
+						type: "POST",
+						data: {
+							action: 'fca_pc_tiktok_api_event',
+							event_name: action, 
+							event_time: GMT_time,
+							event_id: eventID,
+							external_id: externalID,
+							client_user_agent: navigator.userAgent,
+							event_source_url: window.location.origin + window.location.pathname,
+							custom_data: JSON.stringify( tiktok_event_params ),
+							nonce: fcaPcOptions.nonce
+						}
+					})
+				}
+			} 
+			
 			if ( tiktok_action ) {
-				ttq.track( tiktok_action, event_params )			
+				
+				ttq.track( tiktok_action, tiktok_event_params )				
+				
+				if( fcaPcOptions.capis.hasOwnProperty( 'TikTok' ) ) {
+				
+					$.ajax({
+						url: fcaPcOptions.ajax_url,
+						type: "POST",
+						data: {
+							action: 'fca_pc_tiktok_api_event',
+							event_name: tiktok_action, 
+							event_time: GMT_time,
+							event_id: eventID,
+							external_id: externalID,
+							client_user_agent: navigator.userAgent,
+							event_source_url: window.location.origin + window.location.pathname,
+							custom_data: JSON.stringify( tiktok_event_params ),
+							nonce: fcaPcOptions.nonce
+						}
+					})
+				}
 			}
 			
-			if ( name === 'trackCustom' && pixelType === 'TikTok' ) {
-				ttq.track( action, event_params )	
-			}
 		}
 		
 		if( typeof( pintrk ) !== 'undefined' ){

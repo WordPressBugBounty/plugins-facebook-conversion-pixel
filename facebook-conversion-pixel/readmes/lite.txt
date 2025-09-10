@@ -8,7 +8,7 @@ Requires at least: 4.0
 Tested up to: 6.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 3.1.1
+Stable tag: 3.2.0
 
 Add Meta & Facebook Pixel, Google Analytics (GA4) and any header script to your site. Everything you need to track users, ads, events & conversions.
 
@@ -150,6 +150,11 @@ Pixel Cat - Conversion Pixel Manager will automatically detect your old settings
 
 
 == Changelog ==
+
+= Pixel Cat: Conversion Pixel Manager 3.2.0 =
+* Added TikTok Event API support 
+* Fix/improve Facebook advanced matching behavior for logged out users
+* Fix/improve Facebook click ID behavior on initial load
 
 = Pixel Cat: Conversion Pixel Manager 3.1.1 =
 * Added Facebook Click ID parameter

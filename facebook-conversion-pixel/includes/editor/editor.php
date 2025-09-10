@@ -494,6 +494,22 @@ function fca_pc_add_pixel_form() {
 					<input id='fca-pc-modal-tiktok-input' type='text' placeholder='e.g. CKMUJJJC77U3G7B8ASE2' class='fca-pc-input-text' style='width: 100%'>
 				</td>
 			</tr>	
+			<tr id='fca-pc-tiktok-capi-input-tr'>
+				<th style="top: 0;"><?php esc_attr_e( 'TikTok Access Token', 'facebook-conversion-pixel' ); echo fca_pc_tooltip( esc_attr__( 'Enter your TikTok Access Token here. Add to enable TikTok Server Events API which is optional but may provide more reliable event tracking.', 'facebook-conversion-pixel' ) ) ?>
+					<br><a class="fca_pc_hint" href="https://business-api.tiktok.com/portal/docs?id=1771101130925058" target="_blank"> <?php echo esc_attr__( 'What is my TikTok Access Token?', 'facebook-conversion-pixel' ) ?></a>
+				</th>
+				<td id="fca-pc-tiktok-capi-helptext" class="fca-pc-validation-helptext" title="<?php echo esc_attr__(' ', 'facebook-conversion-pixel' ) ?>">
+					<input id='fca-pc-modal-tiktok-capi-input' type='text' placeholder='e.g. 18c5573fe0eeb2106ff7...' class='fca-pc-input-text' style='width: 100%'>
+				</td>
+			</tr>	
+			<tr id='fca-pc-tiktok-test-input-tr'>
+				<th style="top: 0;"><?php esc_attr_e( 'TikTok Test Value', 'facebook-conversion-pixel' ); echo fca_pc_tooltip( esc_attr__( 'Test TikTok Events API connectivity (found in Test events in your TikTok Events Manager). Remove this when going live!', 'facebook-conversion-pixel' ) ) ?>
+					<br><a class="fca_pc_hint" href="https://business-api.tiktok.com/portal/docs?id=1771100984456193" target="_blank"> <?php echo esc_attr__( 'What is my TikTok Test Value?', 'facebook-conversion-pixel' ) ?></a>
+				</th>
+				<td id="fca-pc-tiktok-test-helptext" class="fca-pc-validation-helptext" title="<?php echo esc_attr__(' ', 'facebook-conversion-pixel' ) ?>">
+					<input id='fca-pc-modal-tiktok-test-input' type='text' placeholder='e.g. TEST_01235' class='fca-pc-input-text' style='width: 100%'>
+				</td>
+			</tr>	
 			<tr class='fca-pc-exclude-input-tr'>
 				<th style="top: 0;"><?php echo esc_attr( 'Excluded Pages', 'facebook-conversion-pixel' ) . fca_sp_premium_only_link() ?></th>				
 				<td>
@@ -666,7 +682,7 @@ function fca_pc_settings_save() {
 	$data['edd_feed'] = empty( $_POST['fca_pc']['edd_feed'] ) ? '' : 'on';
 	$data['edd_excluded_categories'] = empty( $_POST['fca_pc']['edd_excluded_categories'] ) ? '' : sanitize_text_field( $_POST['fca_pc']['edd_excluded_categories'] );
 	$data['edd_desc_mode'] = empty( $_POST['fca_pc']['edd_desc_mode'] ) ? '' : sanitize_text_field( $_POST['fca_pc']['edd_desc_mode'] );
-
+	
 	if ( function_exists( 'fca_pc_premium_save' ) ) {
 		$data = fca_pc_premium_save( $data );
 	}
@@ -675,6 +691,21 @@ function fca_pc_settings_save() {
 
 	return $data;
 
+}
+
+function fca_pc_capis_available( $options ) {
+	
+	$pixels = fca_pc_parse_pixels( $options );
+	$capis = [];
+	
+	forEach ( $pixels as $pixel ) {
+		if( !empty( $pixel['capi'] ) ) {
+			$capis[ $pixel['type'] ] = true;
+		}
+		
+	}
+	
+	return $capis;
 }
 
 function fca_pc_add_settings_table( $options ) {
@@ -748,14 +779,14 @@ function fca_pc_add_settings_table( $options ) {
 	<table class='fca_pc_setting_table fca_pc_integrations_table'>
 		
 		<tr>
-			<th><?php esc_attr_e( 'WordPress Search Event', 'facebook-conversion-pixel' ) ?></th>
-			<td><?php echo fca_pc_input( 'search_integration', '', $search_integration_on, 'checkbox' ) ?>
-			<span class='fca_pc_hint'><?php esc_attr_e("Trigger the Search event when a search is performed using WordPress' built-in search feature.", 'facebook-conversion-pixel' ) ?></span></td>
-		</tr>
-		<tr>
 			<th><?php echo esc_attr( 'Advanced Matching', 'facebook-conversion-pixel' ) . fca_sp_premium_only_link() ?> </th>
 			<td><?php echo fca_pc_input( 'advanced_matching', '', $advanced_matching, 'checkbox' ) ?>
 			<span class='fca_pc_hint'><?php esc_attr_e("Enable Advanced Matching for all events. According to Facebook, advertisers using advanced matching can expect a 10% increase in attributed conversions and 20% increase in reach.", 'facebook-conversion-pixel' ) ?></span></td>
+		</tr>
+		<tr>
+			<th><?php esc_attr_e( 'WordPress Search Event', 'facebook-conversion-pixel' ) ?></th>
+			<td><?php echo fca_pc_input( 'search_integration', '', $search_integration_on, 'checkbox' ) ?>
+			<span class='fca_pc_hint'><?php esc_attr_e("Trigger the Search event when a search is performed using WordPress' built-in search feature.", 'facebook-conversion-pixel' ) ?></span></td>
 		</tr>
 		<tr>
 			<th><?php echo esc_attr( 'AMP support', 'facebook-conversion-pixel' ) . fca_sp_premium_only_link() ?></th>

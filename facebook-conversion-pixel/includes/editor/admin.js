@@ -1043,7 +1043,7 @@ jQuery(document).ready(function($){
 		$('#fca-pc-pixel-save').data('pixelID', '')
 
 		//Set default type to pixel
-		$('#fca-pc-modal-type-select').val('Facebook Pixel').trigger( 'change' )
+		$('#fca-pc-modal-type-select').val('Conversions API').trigger( 'change' ) 
 
 		//Clear inputboxes
 		$('#fca-pc-modal-pixel-input').val( '' )
@@ -1054,13 +1054,11 @@ jQuery(document).ready(function($){
 		$('#fca-pc-modal-adwords-input').val( '' )
 		$('#fca-pc-modal-pinterest-input').val( '' )
 		$('#fca-pc-modal-tiktok-input').val( '' )
+		$('#fca-pc-modal-tiktok-capi-input').val( '' )
+		$('#fca-pc-modal-tiktok-test-input').val( '' )
 		$('#fca-pc-modal-header-code').val( '' )
 		$('#fca-pc-pixel-excluded-pages').val( '' ).trigger('change')
 		
-		//Hide CAPI inputs by default
-		$('#fca-pc-capi-input-tr').hide()
-		$('#fca-pc-test-input-tr').hide()
-
 		//Show modal & overlay
 		$('#fca-pc-pixel-modal').show()
 		$('#fca-pc-overlay').show()
@@ -1069,6 +1067,7 @@ jQuery(document).ready(function($){
 	// Show / hide CAPI settings on select change
 	$('#fca-pc-modal-type-select').on( 'change', function(){
 		var input_value = $(this).val()
+
 		$('#fca-pc-capi-input-tr').hide()
 		$('#fca-pc-test-input-tr').hide()
 		$('#fca-pc-pixel-input-tr').hide()
@@ -1080,6 +1079,8 @@ jQuery(document).ready(function($){
 		$('#fca-pc-pinterest-input-tr').hide()
 		$('#fca-pc-snapchat-input-tr').hide()
 		$('#fca-pc-tiktok-input-tr').hide()
+		$('#fca-pc-tiktok-capi-input-tr').hide()
+		$('#fca-pc-tiktok-test-input-tr').hide()
 		
 		switch( input_value ) {
 			case 'Conversions API':
@@ -1115,6 +1116,8 @@ jQuery(document).ready(function($){
 				
 			case 'TikTok':
 				$('#fca-pc-tiktok-input-tr').show()
+				$('#fca-pc-tiktok-capi-input-tr').show()
+				$('#fca-pc-tiktok-test-input-tr').show()
 				break
 				
 			case 'Custom Header Script':
@@ -1299,6 +1302,8 @@ jQuery(document).ready(function($){
 			
 			case 'TikTok':
 				newPixel.pixel = $('#fca-pc-modal-tiktok-input').val()
+				newPixel.capi = $('#fca-pc-modal-tiktok-capi-input').val()
+				newPixel.test = $('#fca-pc-modal-tiktok-test-input').val()
 				break
 				
 			case 'Custom Header Script':
@@ -1449,7 +1454,7 @@ jQuery(document).ready(function($){
 				}
 			}
 		}
-
+				
 		//SET CUSTOM PARAMETERS
 		$('.fca-pc-input-parameter-name').each(function(index, element){
 			var name = $( this ).val()
@@ -1458,6 +1463,17 @@ jQuery(document).ready(function($){
 				fbEvent.parameters[ name ] = value
 			}
 		})
+		
+		//IF ITS A TIKTOK CUSTOM EVENT, ADD CONTENT_ID AND CONTENT_IDS 
+		if( fbEvent.pixel_type === 'TikTok' ) {
+			if( typeof( fbEvent.parameters['content_id'] ) == 'undefined' ) {
+				fbEvent.parameters['content_id'] = '{post_id}'
+			}
+			if( typeof( fbEvent.parameters['content_ids'] ) == 'undefined' ) {
+				fbEvent.parameters['content_ids'] = '{post_id}'
+			}
+			
+		}
 		
 		//DELAY
 		fbEvent.delay = $('#fca-pc-modal-delay-input').val()
@@ -1743,6 +1759,8 @@ jQuery(document).ready(function($){
 					
 				case 'TikTok':
 					$('#fca-pc-modal-tiktok-input').val( pixel.pixel )
+					$('#fca-pc-modal-tiktok-capi-input').val( pixel.capi )
+					$('#fca-pc-modal-tiktok-test-input').val( pixel.test )
 					break
 					
 				case 'Custom Header Script':

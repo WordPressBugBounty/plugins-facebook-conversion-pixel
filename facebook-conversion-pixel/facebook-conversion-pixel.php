@@ -8,7 +8,7 @@
 	Author: Fatcat Apps
 	Author URI: https://fatcatapps.com/
 	License: GPLv2
-	Version: 3.1.1
+	Version: 3.2.0
 */
 
 
@@ -29,9 +29,9 @@ if ( !defined( 'FCA_PC_PLUGIN_DIR' ) ) {
 	define( 'FCA_PC_PLUGIN_NAME', 'Pixel Cat Premium: ' . FCA_PC_PLUGIN_PACKAGE );
 
 	if ( FCA_PC_DEBUG ) {
-		define( 'FCA_PC_PLUGIN_VER', '3.1.' . time() );
+		define( 'FCA_PC_PLUGIN_VER', '3.2.' . time() );
 	} else {
-		define( 'FCA_PC_PLUGIN_VER', '3.1.1' );
+		define( 'FCA_PC_PLUGIN_VER', '3.2.0' );
 	}
 
 	//LOAD CORE
@@ -121,10 +121,10 @@ if ( !defined( 'FCA_PC_PLUGIN_DIR' ) ) {
 		$configure_url = admin_url( 'admin.php?page=fca_pc_settings_page' );
 		$support_url = FCA_PC_PLUGIN_PACKAGE === 'Lite' ? 'https://wordpress.org/support/plugin/facebook-conversion-pixel' : 'https://fatcatapps.com/support';
 
-		$new_links = array(
+		$new_links = [
 			'configure' => "<a href='" . esc_url( $configure_url ) . "' >" . esc_attr__( 'Configure Pixel', 'facebook-conversion-pixel' ) . '</a>',
 			'support' => "<a target='_blank' href='" . esc_url( $support_url ) . "' >" . esc_attr__( 'Support', 'facebook-conversion-pixel' ) . '</a>'
-		);
+		];
 
 		$links = array_merge( $new_links, $links );
 
@@ -144,7 +144,7 @@ if ( !defined( 'FCA_PC_PLUGIN_DIR' ) ) {
 
 		$show_upgrade_info = get_option( 'fca_pc_after_upgrade_info', false );
 
-		if ( isSet( $_GET['fca_pc_dismiss_upgrade_info'] ) && current_user_can( 'manage_options' ) ) {
+		if ( isset( $_GET['fca_pc_dismiss_upgrade_info'] ) && current_user_can( 'manage_options' ) ) {
 			$show_upgrade_info = false;
 			update_option( 'fca_pc_after_upgrade_info', false );
 		}
@@ -155,20 +155,20 @@ if ( !defined( 'FCA_PC_PLUGIN_DIR' ) ) {
 			$dismiss_url = add_query_arg( 'fca_pc_dismiss_upgrade_info', true );
 
 			echo '<div id="fca-pc-setup-notice" class="notice notice-success is-dismissible" style="padding-bottom: 8px; padding-top: 8px;">';
-				echo '<p style="margin-top: 0;"><strong>' .  esc_attr__( "Pixel Cat: ", 'facebook-conversion-pixel' ) . '</strong>' .  esc_attr__( "Thanks for upgrading to the new Facebook Pixel. We've prepared a handy guide that explains what you'll need to do to complete setup.", 'facebook-conversion-pixel' ) . '</p>';
-				echo '<p>'.  esc_attr__( "Want to revert to the old Facebook Conversion Pixel? Go to your", 'facebook-conversion-pixel' ) . " <a href='" . esc_url( $settings_url ) . "'>" . esc_attr__( "Facebook Pixel settings</a> and click 'Click here to downgrade' at the very bottom of the screen.", 'facebook-conversion-pixel' ) . '</p>';
-				echo "<a style='margin-right: 16px; margin-top: 32px;' href='$read_more_url' class='button button-primary' target='_blank' >" . esc_attr__( 'Read the Facebook Pixel migration guide', 'facebook-conversion-pixel' ) . "</a> ";
-				echo "<a style='margin-right: 16px; position: relative;	top: 36px;' href='" . esc_url( $dismiss_url ) . "'>" . esc_attr__( 'Close', 'facebook-conversion-pixel' ) . "</a> ";
+				echo '<p style="margin-top: 0;"><strong>' .  esc_html__( "Pixel Cat: ", 'facebook-conversion-pixel' ) . '</strong>' .  esc_html__( "Thanks for upgrading to the new Facebook Pixel. We've prepared a handy guide that explains what you'll need to do to complete setup.", 'facebook-conversion-pixel' ) . '</p>';
+				echo '<p>'.  esc_html__( "Want to revert to the old Facebook Conversion Pixel? Go to your", 'facebook-conversion-pixel' ) . " <a href='" . esc_url( $settings_url ) . "'>" . esc_html__( "Facebook Pixel settings</a> and click 'Click here to downgrade' at the very bottom of the screen.", 'facebook-conversion-pixel' ) . '</p>';
+				echo "<a style='margin-right: 16px; margin-top: 32px;' href='$read_more_url' class='button button-primary' target='_blank' >" . esc_html__( 'Read the Facebook Pixel migration guide', 'facebook-conversion-pixel' ) . "</a> ";
+				echo "<a style='margin-right: 16px; position: relative;	top: 36px;' href='" . esc_url( $dismiss_url ) . "'>" . esc_html__( 'Close', 'facebook-conversion-pixel' ) . "</a> ";
 				echo '<br style="clear:both">';
 			echo '</div>';
 
 		}
 
 		$dismissed = get_option( 'fca_pc_no_pixel_dismissed', false );
-		$options = get_option( 'fca_pc', array() );
+		$options = get_option( 'fca_pc', [] );
 		$screen = get_current_screen();
 
-		if ( isSet( $_GET['fca_pc_dismiss_no_pixel'] ) && current_user_can( 'manage_options' ) ) {
+		if ( isset( $_GET['fca_pc_dismiss_no_pixel'] ) && current_user_can( 'manage_options' ) ) {
 			$dismissed = true;
 			update_option( 'fca_pc_no_pixel_dismissed', true );
 		}
@@ -178,10 +178,10 @@ if ( !defined( 'FCA_PC_PLUGIN_DIR' ) ) {
 			$dismiss_url = add_query_arg( 'fca_pc_dismiss_no_pixel', true );
 
 			echo '<div id="fca-pc-setup-notice" class="notice notice-success is-dismissible" style="padding-bottom: 8px; padding-top: 8px;">';
-				echo '<p><strong>' . esc_attr__( "Thank you for installing Pixel Cat.", 'facebook-conversion-pixel' ) . '</strong></p>';
-				echo '<p>' . esc_attr__( "It looks like you haven't configured your Facebook Pixel yet. Ready to get started?", 'facebook-conversion-pixel' ) . '</p>';
-				echo "<a href='" . esc_url( $url ) . "' class='button button-primary' style='margin-top: 25px;'>" . esc_attr__( 'Set up my Pixel', 'facebook-conversion-pixel' ) . "</a> ";
-				echo "<a style='position: relative; top: 30px; left: 16px;' href='" . esc_url( $dismiss_url ) . "' >" . esc_attr__( 'Dismiss', 'facebook-conversion-pixel' ) . "</a> ";
+				echo '<p><strong>' . esc_html__( "Thank you for installing Pixel Cat.", 'facebook-conversion-pixel' ) . '</strong></p>';
+				echo '<p>' . esc_html__( "It looks like you haven't configured your Facebook Pixel yet. Ready to get started?", 'facebook-conversion-pixel' ) . '</p>';
+				echo "<a href='" . esc_url( $url ) . "' class='button button-primary' style='margin-top: 25px;'>" . esc_html__( 'Set up my Pixel', 'facebook-conversion-pixel' ) . "</a> ";
+				echo "<a style='position: relative; top: 30px; left: 16px;' href='" . esc_url( $dismiss_url ) . "' >" . esc_html__( 'Dismiss', 'facebook-conversion-pixel' ) . "</a> ";
 				echo '<br style="clear:both">';
 			echo '</div>';
 		}
@@ -193,7 +193,7 @@ if ( !defined( 'FCA_PC_PLUGIN_DIR' ) ) {
 	//TURN OFF EDD/WOOCOMMERCE INTEGRATIONS WHEN PLUGINS ARE DISABLED
 	function fca_pc_plugin_check( $plugin ) {
 
-		$options = get_option( 'fca_pc', array() );
+		$options = get_option( 'fca_pc', [] );
 
 		if ( $plugin == 'woocommerce/woocommerce.php' ) {
 			$options['woo_integration'] = false;
@@ -207,41 +207,41 @@ if ( !defined( 'FCA_PC_PLUGIN_DIR' ) ) {
 	
 	function fca_pc_backward_compatibility_260( ){
 		
-		$options = get_option( 'fca_pc', array() );
+		$options = get_option( 'fca_pc', [] );
 		$updated = get_option( 'fca_pc_version' ) ? version_compare( get_option( 'fca_pc_version' ), '2.6.0', '>=' ) : 0;
 		$pixels = empty( $options['pixels'] ) ? false : true;
 
 		//if fca_pc_version doesn't exist, take old ids and create new db structure
 		if( !$updated && !$pixels ){
 
-			$old_pixels = array();
+			$old_pixels = [];
 			$pixel_count = 1;
 			$pixel = empty( $options['id'] ) ? '' : $options['id'];
-			$pixels = empty( $options['ids'] ) ? array() : $options['ids'];
+			$pixels = empty( $options['ids'] ) ? [] : $options['ids'];
 
 			if( $pixel ){
-				$old_pixel = array(
+				$old_pixel = [
 					'pixel' => $pixel,
 					'capi' => '',
 					'test' => '',
 					'paused' => '',
 					'type' => 'Facebook Pixel',
 					'ID' => 'old_pixel_' . $pixel_count
-				);
+				];
 				array_push( $old_pixels, json_encode( $old_pixel ) );
 				$pixel_count += 1;
 			}
 
 			if( $pixels ){
 				forEach( $pixels as $pixel ){
-					$old_pixel = array(
+					$old_pixel = [
 						'pixel' => $pixel,
 						'capi' => '',
 						'test' => '',
 						'paused' => '',
 						'type' => 'Facebook Pixel',
 						'ID' => 'old_pixel_' . $pixel_count
-					);
+					];
 					array_push( $old_pixels, json_encode( $old_pixel ) );
 					$pixel_count += 1;
 				}

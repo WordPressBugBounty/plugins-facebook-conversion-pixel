@@ -16,7 +16,12 @@ function fca_pc_parse_pixels( $options ) {
 	return $parsed_pixels;
 }
 
-function fca_pc_get_active_pixels( $options ) {
+function fca_pc_get_active_pixels( $options = array() ) {
+	
+	if ( empty( $options ) ) {
+		$options = get_option( 'fca_pc', array() );
+	}
+	
 	$parsed_pixels = fca_pc_parse_pixels( $options );
 	$active_pixels = array();
 	
@@ -196,27 +201,27 @@ function fca_pc_add_pixels( $options ) {
 	};
 	
 	if ( !empty( $ga4_pixels ) OR !empty( $ga3_pixels ) OR !empty( $adwords_pixels ) ) {
-		fca_pc_add_google_pixels( array_merge( $ga3_pixels, $ga4_pixels, $adwords_pixels ), $options );
+		fca_pc_add_google_pixels( array_merge( $ga3_pixels, $ga4_pixels, $adwords_pixels ) );
 	}	
 	if ( !empty( $pinterest_pixels ) ) {		
-		fca_pc_add_pinterest_pixels( $pinterest_pixels, $options );
+		fca_pc_add_pinterest_pixels( $pinterest_pixels );
 	}
 	if ( !empty( $snapchat_pixels ) ) {		
-		fca_pc_add_snapchat_pixels( $snapchat_pixels, $options );
+		fca_pc_add_snapchat_pixels( $snapchat_pixels );
 	}
 	if ( !empty( $facebook_pixels ) ) {		
 		fca_pc_add_facebook_pixels( $facebook_pixels, $options );
 	}
 	if ( !empty( $tiktok_pixels ) ) {		
-		fca_pc_add_tiktok_pixels( $tiktok_pixels, $options );
+		fca_pc_add_tiktok_pixels( $tiktok_pixels );
 	}
 	if ( !empty( $header_pixels ) ) {		
-		fca_pc_add_header_pixels( $header_pixels, $options );
+		fca_pc_add_header_pixels( $header_pixels );
 	}
 	
 }
 
-function fca_pc_add_header_pixels( $header_pixels, $options ) {
+function fca_pc_add_header_pixels( $header_pixels ) {
 	forEach ( $header_pixels as $pixel ) {			
 		$code = $pixel['capi'];
 		echo html_entity_decode( $code, ENT_QUOTES );
@@ -256,7 +261,7 @@ function fca_pc_add_facebook_pixels( $facebook_pixels, $options ) {
 	
 }
 
-function fca_pc_add_tiktok_pixels( $tiktok_pixels, $options ) {
+function fca_pc_add_tiktok_pixels( $tiktok_pixels ) {
 	$code = ''; //INIT CODE FOR PIXEL
 	
 	forEach ( $tiktok_pixels as $pixel ) {		
@@ -307,7 +312,7 @@ function fca_pc_add_google_pixels( $google_pixels ) {
 		
 }
 
-function fca_pc_add_pinterest_pixels( $pinterest_pixels, $options ) {
+function fca_pc_add_pinterest_pixels( $pinterest_pixels ) {
 	
 	$code = ''; //INIT CODE FOR PIXEL
 	
@@ -332,7 +337,7 @@ function fca_pc_add_pinterest_pixels( $pinterest_pixels, $options ) {
 	</script>
 	<noscript>
 	<img height="1" width="1" style="display:none;" alt=""
-	  src="https://ct.pinterest.com/v3/?event=init&tid=2613944587473&pd[em]=<hashed_email_address>&noscript=1" />
+	  src="https://ct.pinterest.com/v3/?event=init&tid=<?php echo $pixel_id ?>&pd[em]=<hashed_email_address>&noscript=1" />
 	</noscript>
 	<!-- end Pinterest Tag -->
 	<?php 
@@ -340,7 +345,7 @@ function fca_pc_add_pinterest_pixels( $pinterest_pixels, $options ) {
 	
 }
 
-function fca_pc_add_snapchat_pixels( $snapchat_pixels, $options ) {
+function fca_pc_add_snapchat_pixels( $snapchat_pixels ) {
 	
 	$code = ''; //INIT CODE FOR PIXEL
 	
@@ -393,6 +398,7 @@ function fca_pc_localize_pixel_options( $options ) {
 	
 	return array(
 		'pixel_types' => fca_pc_get_active_pixel_types( $options ),
+		'capis' => fca_pc_capis_available( $options ),
 		'ajax_url' => admin_url( 'admin-ajax.php' ),
 		'debug' => FCA_PC_DEBUG,
 		'edd_currency' => $edd_currency,		
@@ -460,7 +466,7 @@ function fca_pc_advanced_matching( $hashed = false ) {
 	
 	$ip_addr = fca_pc_get_client_ip();
 	$fbc = empty( $_COOKIE['_fbc'] ) ? '' : sanitize_text_field( $_COOKIE['_fbc'] );
-	$client_user_agent = empty( $_POST['client_user_agent'] ) ? '' : sanitize_text_field( $_POST['client_user_agent'] );
+	$client_user_agent = empty( $_POST['client_user_agent'] ) ? sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ) : sanitize_text_field( $_POST['client_user_agent'] );
 	$external_id = empty( $_POST['external_id'] ) ? '' : sanitize_text_field( $_POST['external_id'] );
 			
 	if ( !empty( $_COOKIE['fca_pc_advanced_matching'] ) ) {
@@ -544,8 +550,25 @@ function fca_pc_advanced_matching( $hashed = false ) {
 		return json_encode( array_filter( $user_data ) );
 
 	}
-
-	return false;
+	
+	//FALLBACK -- NOT LOGGED IN OR ON CHECKOUT
+	$user_data = array (
+		'external_id' => $external_id,
+		'client_ip_address' => $ip_addr,
+		'client_user_agent' => $client_user_agent,
+		'fbc' => $fbc
+	);
+			
+	if( $hashed ) {
+		return array (
+			'external_id' => $external_id,
+			'client_ip_address' => $ip_addr,
+			'client_user_agent' => $client_user_agent,
+			'fbc' => $fbc
+		);
+	}
+	
+	return json_encode( array_filter( $user_data ) );
 }
 
 function fca_pc_maybe_hash( $string ) {
