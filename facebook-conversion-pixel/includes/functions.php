@@ -914,6 +914,21 @@ function fca_pc_admin_header_nav(){
 function fca_pc_is_edd_active() {	
 	return ( fca_pc_is_plugin_active( 'easy-digital-downloads/easy-digital-downloads.php' ) OR fca_pc_is_plugin_active( 'easy-digital-downloads-pro/easy-digital-downloads.php' ) );
 }
+function fca_pc_is_woo_active() {
+
+	
+	$version_ok = false;
+	$woo_is_active = is_plugin_active( 'woocommerce/woocommerce.php' );
+
+	if ( $woo_is_active ) {
+		global $woocommerce;
+		if ( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {
+			$version_ok = true;
+		}
+	}
+	
+	return $woo_is_active && $version_ok;
+}
 
 function fca_pc_is_plugin_active( $plugin ) {
 	return in_array( $plugin, (array) get_option( 'active_plugins', array() ) );

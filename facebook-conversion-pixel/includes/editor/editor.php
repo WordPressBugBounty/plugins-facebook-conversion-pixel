@@ -149,13 +149,16 @@ function fca_pc_add_event_form() {
 		'AddToWishlistSnapchat' => 'ADD_TO_WISHLIST',
 		'InitiateCheckoutSnapchat' => 'START_CHECKOUT',
 		'PurchaseSnapchat' => 'PURCHASE',
+		'PageViewSnapchat' => 'PAGE_VIEW',
 		'ViewContentSnapchat' => 'VIEW_CONTENT',
 		
 		'AddToCartPinterest' => 'AddToCart',
 		'CompleteRegistrationPinterest' => 'Signup',
 		'LeadPinterest' => 'Lead',
+		'AddPaymentInfoPinterest' => 'AddPaymentInfo',
+		'InitiateCheckoutPinterest' => 'InitiateCheckout',
 		'PurchasePinterest' => 'Checkout',
-		'ViewContentPinterest' => 'PageVisit',
+		'ViewContentPinterest' => 'ViewContent',
 		
 		'AddToCartGA' => 'add_to_cart',
 		'AddPaymentInfoGA' => 'add_payment_info',
@@ -368,7 +371,7 @@ function fca_pc_add_pixel_form() {
 		'GA3' => 'Google Universal Analytics (GA3)',
 		'GA4' => 'Google Analytics (GA4)',
 		'Adwords' => 'Google Ads',
-		'Pinterest' => 'Pinterest Conversions',
+		'Pinterest' => 'Pinterest Pixel',
 		'Snapchat' => 'Snapchat Pixel',
 		'TikTok' => 'TikTok Pixel',
 		'Custom Header Script' => 'Custom Header Script',
@@ -383,7 +386,7 @@ function fca_pc_add_pixel_form() {
 			'GA4' => 'Google Analytics (GA4)',
 			'Custom Header Script' => 'Custom Header Script',
 			'Adwords' => 'Google Ads (Premium Only)',
-			'Pinterest' => 'Pinterest Conversions (Premium Only)',
+			'Pinterest' => 'Pinterest Pixel (Premium Only)',
 			'TikTok' => 'TikTok Pixel (Premium Only)',
 			'Snapchat' => 'Snapchat Pixel (Premium Only)',
 			
@@ -478,6 +481,33 @@ function fca_pc_add_pixel_form() {
 					<input id='fca-pc-modal-pinterest-input' type='text' placeholder='e.g. 1234567890' class='fca-pc-input-text' style='width: 100%'>
 				</td>
 			</tr>	
+			<tr id='fca-pc-pinterest-capi-input-tr'>
+				<th style="top: 0;"><?php esc_attr_e( 'Pinterest Access Token', 'facebook-conversion-pixel' ); echo fca_pc_tooltip( esc_attr__( 'Enter your Pinterest Access Token here. Add to enable Pinterest Server Events API which is optional but may provide more reliable event tracking.', 'facebook-conversion-pixel' ) ) ?>
+					<br><a class="fca_pc_hint" href="https://help.pinterest.com/en-gb/business/article/getting-started-with-the-conversions-api" target="_blank"> <?php echo esc_attr__( 'What is my Pinterest Access Token?', 'facebook-conversion-pixel' ) ?></a>
+				</th>
+				<td id="fca-pc-pinterest-capi-helptext" class="fca-pc-validation-helptext" title="<?php echo esc_attr__(' ', 'facebook-conversion-pixel' ) ?>">
+					<input id='fca-pc-modal-pinterest-capi-input' type='text' placeholder='e.g. 18c5573fe0eeb2106ff7...' class='fca-pc-input-text' style='width: 100%'>
+				</td>
+			</tr>	
+			<tr id='fca-pc-pinterest-account-input-tr'>
+				<th style="top: 0;"><?php esc_attr_e( 'Pinterest Ad Account ID', 'facebook-conversion-pixel' ); echo fca_pc_tooltip( esc_attr__( 'Enter your Pinterest Ad Account ID here. Add to enable Pinterest Server Events API which is optional but may provide more reliable event tracking.', 'facebook-conversion-pixel' ) ) ?>
+					<br><a class="fca_pc_hint" href="#" target="_blank"> <?php echo esc_attr__( 'What is my Ad Account ID?', 'facebook-conversion-pixel' ) ?></a>
+				</th>
+				<td id="fca-pc-pinterest-account-helptext" class="fca-pc-validation-helptext" title="<?php echo esc_attr__(' ', 'facebook-conversion-pixel' ) ?>">
+					<input id='fca-pc-modal-pinterest-account-input' type='text' placeholder='e.g. 549765364400' class='fca-pc-input-text' style='width: 100%'>
+				</td>
+			</tr>	
+			<tr id='fca-pc-pinterest-test-input-tr'>
+				<th style="top: 0;"><?php esc_attr_e( 'Pinterest Test Mode', 'facebook-conversion-pixel' ); echo fca_pc_tooltip( esc_attr__( 'Test Pinterest Events API connectivity (found in Test events in your Pinterest Events Manager). Remove this when going live!', 'facebook-conversion-pixel' ) ) ?>
+					<br>
+				</th>
+				<td id="fca-pc-pinterest-test-helptext" class="fca-pc-validation-helptext" title="<?php echo esc_attr__(' ', 'facebook-conversion-pixel' ) ?>">
+					<select id='fca-pc-modal-pinterest-test-input' >
+						<option value=''>Disabled</option>
+						<option value='true'>Enabled</option>
+					</select>
+				</td>
+			</tr>	
 			<tr id='fca-pc-snapchat-input-tr'>
 				<th style="top: 0;"><?php esc_attr_e( 'Snap Pixel ID', 'facebook-conversion-pixel' ); echo fca_pc_tooltip( esc_attr__( 'Enter your Snap Pixel ID here', 'facebook-conversion-pixel' ) ) ?>
 					<br><a class="fca_pc_hint" href="https://forbusiness.snapchat.com/blog/the-snap-pixel-how-it-works-and-how-to-install-it" target="_blank"> <?php echo esc_attr__( 'What is my Snap Pixel ID?', 'facebook-conversion-pixel' ) ?></a>
@@ -486,6 +516,26 @@ function fca_pc_add_pixel_form() {
 					<input id='fca-pc-modal-snapchat-input' type='text' placeholder='e.g. ca2a4cf8-b536-4b47-bdf7-a92ed596a420' class='fca-pc-input-text' style='width: 100%'>
 				</td>
 			</tr>	
+			<tr id='fca-pc-snapchat-capi-input-tr'>
+				<th style="top: 0;"><?php esc_attr_e( 'Snapchat Access Token', 'facebook-conversion-pixel' ); echo fca_pc_tooltip( esc_attr__( 'Enter your Snapchat Access Token here. Add to enable Snapchat Conversions API which is optional but may provide more reliable event tracking.', 'facebook-conversion-pixel' ) ) ?>
+					<br><a class="fca_pc_hint" href="https://businesshelp.snapchat.com/s/article/api-auth-tokens-capi-faq?language=en_US" target="_blank"> <?php echo esc_attr__( 'What is my Snapchat Access Token?', 'facebook-conversion-pixel' ) ?></a>
+				</th>
+				<td id="fca-pc-snapchat-capi-helptext" class="fca-pc-validation-helptext" title="<?php echo esc_attr__(' ', 'facebook-conversion-pixel' ) ?>">
+					<input id='fca-pc-modal-snapchat-capi-input' type='text' placeholder='e.g. eyJhbGciOiJIUzI...' class='fca-pc-input-text' style='width: 100%'>
+				</td>
+			</tr>
+			<tr id='fca-pc-snapchat-test-input-tr'>
+				<th style="top: 0;"><?php esc_attr_e( 'Snapchat Test Mode', 'facebook-conversion-pixel' ); echo fca_pc_tooltip( esc_attr__( 'Test Snapchat Events API connectivity (found in Test events in your Events Manager). Remove this when going live!', 'facebook-conversion-pixel' ) ) ?>
+					<br>
+				</th>
+				
+				<td id="fca-pc-snapchat-test-helptext" class="fca-pc-validation-helptext" title="<?php echo esc_attr__(' ', 'facebook-conversion-pixel' ) ?>">
+					<select id='fca-pc-modal-snapchat-test-input' >
+						<option value=''>Disabled</option>
+						<option value='TEST12345'>Enabled</option>
+					</select>
+				</td>
+			</tr>			
 			<tr id='fca-pc-tiktok-input-tr'>
 				<th style="top: 0;"><?php esc_attr_e( 'TikTok Pixel ID', 'facebook-conversion-pixel' ); echo fca_pc_tooltip( esc_attr__( 'Enter your TikTok Pixel ID here', 'facebook-conversion-pixel' ) ) ?>
 					<br><a class="fca_pc_hint" href="https://ads.tiktok.com/help/article/get-started-pixel?lang=en#" target="_blank"> <?php echo esc_attr__( 'What is my TikTok Pixel ID?', 'facebook-conversion-pixel' ) ?></a>
@@ -683,14 +733,134 @@ function fca_pc_settings_save() {
 	$data['edd_excluded_categories'] = empty( $_POST['fca_pc']['edd_excluded_categories'] ) ? '' : sanitize_text_field( $_POST['fca_pc']['edd_excluded_categories'] );
 	$data['edd_desc_mode'] = empty( $_POST['fca_pc']['edd_desc_mode'] ) ? '' : sanitize_text_field( $_POST['fca_pc']['edd_desc_mode'] );
 	
+	
 	if ( function_exists( 'fca_pc_premium_save' ) ) {
 		$data = fca_pc_premium_save( $data );
 	}
+	
+	//AUTO TOGGLE ON INTEGRATIONS WHEN ADDING NEW PIXEL
+	$data = fca_pc_maybe_enable_integrations_on_save( $data );
 
 	update_option( 'fca_pc', $data );
 
 	return $data;
 
+}
+
+function fca_pc_maybe_enable_integrations_on_save( $data ) {
+	$edd_active = fca_pc_is_edd_active();
+	$woo_active = fca_pc_is_woo_active();
+	
+	if( !$woo_active && !$edd_active ) {
+		return $data;
+	}
+	
+	$old_save = get_option( 'fca_pc', $data );
+	
+	$old_active_pixels = fca_pc_get_active_pixels( $old_save );
+	$new_active_pixels = fca_pc_get_active_pixels( $data );
+		
+	$old_pixel_types = array_column( $old_active_pixels, 'type' );
+	$new_pixels_types = array_column( $new_active_pixels, 'type' );
+	
+	$added_pixels = array_values( array_filter( $new_active_pixels, function ( $item ) use ( $old_pixel_types ) {
+		return !in_array( $item['type'], $old_pixel_types, true );
+	}));
+	
+	if( !empty( $added_pixels ) ) {
+		forEach( $added_pixels as $p ) {
+			if( $woo_active ) {
+				switch( $p['type'] ) {
+					case 'Facebook Pixel':
+						$data['woo_integration'] = 'on';
+						break;
+					case 'Conversions API':
+						$data['woo_integration'] = 'on';
+						break;						
+					case 'Adwords':
+						$data['woo_integration_ga'] = 'on';
+						break;
+					case 'GA3':
+						$data['woo_integration_ga'] = 'on';
+						break;
+					case 'GA4':
+						$data['woo_integration_ga'] = 'on';
+						break;
+					case 'Snapchat':
+						$data['woo_integration_snapchat'] = 'on';
+						break;
+					case 'Pinterest':
+						$data['woo_integration_pinterest'] = 'on';
+						break;
+					case 'TikTok':
+						$data['woo_integration_tiktok'] = 'on';
+						break;
+				}
+				
+			}
+			
+			if( $edd_active ) {
+				switch( $p['type'] ) {
+					case 'Facebook Pixel':
+						$data['edd_integration'] = 'on';
+						break;
+					case 'Conversions API':
+						$data['edd_integration'] = 'on';
+						break;						
+					case 'Adwords':
+						$data['edd_integration_ga'] = 'on';
+						break;
+					case 'GA3':
+						$data['edd_integration_ga'] = 'on';
+						break;
+					case 'GA4':
+						$data['edd_integration_ga'] = 'on';
+						break;
+					case 'Snapchat':
+						$data['edd_integration_snapchat'] = 'on';
+						break;
+					case 'Pinterest':
+						$data['edd_integration_pinterest'] = 'on';
+						break;
+					case 'TikTok':
+						$data['edd_integration_tiktok'] = 'on';
+						break;
+				}
+				
+			}
+			
+		}
+	}
+	
+	
+	//TOGGLE OFF INTEGRATION IF NO PIXEL IS SET
+	if( !in_array( 'Facebook Pixel', $new_pixels_types, true ) && !in_array( 'Conversions API', $new_pixels_types, true ) ) {
+		$data['woo_integration'] = '';
+		$data['edd_integration'] = '';
+	}
+	
+	if( !in_array( 'Adwords', $new_pixels_types, true ) && !in_array( 'GA4', $new_pixels_types, true ) && !in_array( 'GA3', $new_pixels_types, true ) ) {
+		$data['woo_integration_ga'] = '';
+		$data['edd_integration_ga'] = '';
+	}
+	
+	if( !in_array( 'Snapchat', $new_pixels_types, true ) ) {
+		$data['woo_integration_snapchat'] = '';
+		$data['edd_integration_snapchat'] = '';
+	}
+	
+	if( !in_array( 'Pinterest', $new_pixels_types, true ) ) {
+		$data['woo_integration_pinterest'] = '';
+		$data['edd_integration_pinterest'] = '';
+	}
+	
+	if( !in_array( 'TikTok', $new_pixels_types, true ) ) {
+		$data['woo_integration_tiktok'] = '';
+		$data['edd_integration_tiktok'] = '';
+	}
+	
+	return $data;
+	
 }
 
 function fca_pc_capis_available( $options ) {
@@ -893,17 +1063,8 @@ function fca_pc_add_e_commerce_integrations( $options ) {
 
 function fca_pc_add_woo_integrations( $options ) {
 
-	$version_ok = false;
-	$woo_is_active = is_plugin_active( 'woocommerce/woocommerce.php' );
-
-	if ( $woo_is_active ) {
-		global $woocommerce;
-		if ( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {
-			$version_ok = true;
-		}
-	}
-	$woo_active = $woo_is_active && $version_ok;
-
+	$woo_active = fca_pc_is_woo_active();
+	
 	$woo_integration_on = empty( $options['woo_integration'] ) ? '' : 'on';
 	$woo_ga_integration_on = empty( $options['woo_integration_ga'] ) ? '' : 'on';
 	$woo_pinterest_integration_on = empty( $options['woo_integration_pinterest'] ) ? '' : 'on';
@@ -934,7 +1095,7 @@ function fca_pc_add_woo_integrations( $options ) {
 	
 	ob_start(); ?>
 	<div id='fca-pc-woo-table'>
-		<?php if ( !$woo_is_active ) { ?>
+		<?php if ( !$woo_active ) { ?>
 			<h3>
 				<?php esc_attr_e( 'WooCommerce', 'facebook-conversion-pixel' ) ?>
 				<span class="installed-text"><span alt="f158" class="dashicons dashicons-no-alt"></span><?php esc_attr_e( 'Not Installed', 'facebook-conversion-pixel' ) ?></span>

@@ -1,7 +1,7 @@
 /* jshint asi: true */
 //////////////////
 //CONFIG
-//////////////////
+////////////////// 
 var basic_params = [
 	'value',
 	'currency',
@@ -249,7 +249,7 @@ var supported_params = {
 		'content_name': 1,
 		'content_type': 1,
 		'content_ids': 1,
-		'content_category': 1,
+		'content_category': 1, 
 		'search_string': 0,
 		'num_items': 0,
 		'status': 0,
@@ -369,6 +369,34 @@ var supported_params = {
 	},
 
 	'AddToCartPinterest': {
+		'value': 1,
+		'currency': 1,
+		'predicted_ltv': 0,
+		'content_name': 1,
+		'content_type': 1,
+		'content_ids': 1,
+		'content_category': 0,
+		'search_string': 0,
+		'num_items': 0,
+		'status': 0,
+		'custom': 1
+	},
+	
+	'AddPaymentInfoPinterest': {
+		'value': 1,
+		'currency': 1,
+		'predicted_ltv': 0,
+		'content_name': 1,
+		'content_type': 1,
+		'content_ids': 1,
+		'content_category': 0,
+		'search_string': 0,
+		'num_items': 0,
+		'status': 0,
+		'custom': 1
+	},
+	
+	'InitiateCheckoutPinterest': {
 		'value': 1,
 		'currency': 1,
 		'predicted_ltv': 0,
@@ -1004,7 +1032,9 @@ jQuery(document).ready(function($){
 				supported_events = [
 					'ViewContentPinterest',
 					'AddToCartPinterest',
-					'PurchasePinterest',
+					'AddPaymentInfoPinterest',
+					'InitiateCheckoutPinterest',
+					'PurchasePinterest', 
 					'CompleteRegistrationPinterest',
 					'LeadPinterest',
 					'custom'
@@ -1053,6 +1083,12 @@ jQuery(document).ready(function($){
 		$('#fca-pc-modal-ga4-input').val( '' )
 		$('#fca-pc-modal-adwords-input').val( '' )
 		$('#fca-pc-modal-pinterest-input').val( '' )
+		$('#fca-pc-modal-pinterest-account-input').val( '' )
+		$('#fca-pc-modal-pinterest-capi-input').val( '' )
+		$('#fca-pc-modal-pinterest-test-input').val( '' )
+		$('#fca-pc-modal-snapchat-input').val( '' )
+		$('#fca-pc-modal-snapchat-capi-input').val( '' )
+		$('#fca-pc-modal-snapchat-test-input').val( '' )
 		$('#fca-pc-modal-tiktok-input').val( '' )
 		$('#fca-pc-modal-tiktok-capi-input').val( '' )
 		$('#fca-pc-modal-tiktok-test-input').val( '' )
@@ -1077,7 +1113,12 @@ jQuery(document).ready(function($){
 		$('.fca-pc-header-input-tr').hide()
 		$('#fca_pc_capi_info').hide()
 		$('#fca-pc-pinterest-input-tr').hide()
+		$('#fca-pc-pinterest-capi-input-tr').hide()
+		$('#fca-pc-pinterest-account-input-tr').hide()
+		$('#fca-pc-pinterest-test-input-tr').hide()
 		$('#fca-pc-snapchat-input-tr').hide()
+		$('#fca-pc-snapchat-capi-input-tr').hide()
+		$('#fca-pc-snapchat-test-input-tr').hide()
 		$('#fca-pc-tiktok-input-tr').hide()
 		$('#fca-pc-tiktok-capi-input-tr').hide()
 		$('#fca-pc-tiktok-test-input-tr').hide()
@@ -1108,10 +1149,15 @@ jQuery(document).ready(function($){
 				
 			case 'Pinterest':
 				$('#fca-pc-pinterest-input-tr').show()
+				$('#fca-pc-pinterest-capi-input-tr').show()
+				$('#fca-pc-pinterest-account-input-tr').show()
+				$('#fca-pc-pinterest-test-input-tr').show()
 				break
 				
 			case 'Snapchat':
 				$('#fca-pc-snapchat-input-tr').show()
+				$('#fca-pc-snapchat-capi-input-tr').show()
+				$('#fca-pc-snapchat-test-input-tr').show()
 				break
 				
 			case 'TikTok':
@@ -1294,10 +1340,15 @@ jQuery(document).ready(function($){
 				
 			case 'Pinterest':
 				newPixel.pixel = $('#fca-pc-modal-pinterest-input').val()
+				newPixel.account = $('#fca-pc-modal-pinterest-account-input').val()
+				newPixel.capi = $('#fca-pc-modal-pinterest-capi-input').val()
+				newPixel.test = $('#fca-pc-modal-pinterest-test-input').val()
 				break
 				
 			case 'Snapchat':
 				newPixel.pixel = $('#fca-pc-modal-snapchat-input').val()
+				newPixel.capi = $('#fca-pc-modal-snapchat-capi-input').val()
+				newPixel.test = $('#fca-pc-modal-snapchat-test-input').val()
 				break
 			
 			case 'TikTok':
@@ -1751,10 +1802,15 @@ jQuery(document).ready(function($){
 					
 				case 'Pinterest':
 					$('#fca-pc-modal-pinterest-input').val( pixel.pixel )
+					$('#fca-pc-modal-pinterest-account-input').val( pixel.account )
+					$('#fca-pc-modal-pinterest-capi-input').val( pixel.capi )
+					$('#fca-pc-modal-pinterest-test-input').val( pixel.test )
 					break
 					
 				case 'Snapchat':
 					$('#fca-pc-modal-snapchat-input').val( pixel.pixel )
+					$('#fca-pc-modal-snapchat-capi-input').val( pixel.capi )
+					$('#fca-pc-modal-snapchat-test-input').val( pixel.test )
 					break
 					
 				case 'TikTok':

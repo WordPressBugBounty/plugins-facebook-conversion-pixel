@@ -111,8 +111,8 @@ jQuery( document ).ready(function($) {
 	}
 	
 	//REMOVE ADVANCED MATCHING COOKIE IF APPLICABLE
-	if ( get_cookie( 'fca_pc_advanced_matching' ) ) {
-		set_cookie( 'fca_pc_advanced_matching', '' )
+	if ( fca_pc_get_cookie( 'fca_pc_advanced_matching' ) ) {
+		fca_pc_set_cookie( 'fca_pc_advanced_matching', '' )
 	}
 	
 	//FB SEARCH INTEGRATION
@@ -162,9 +162,9 @@ jQuery( document ).ready(function($) {
 		})
 
 		//WOO FB INTEGRATION
-		if ( get_cookie( 'fca_pc_woo_add_to_cart' ) ) {
-			fca_pc_trigger_event( 'track', 'AddToCart', JSON.parse( decodeURIComponent ( get_cookie( 'fca_pc_woo_add_to_cart' ).replace(/\+/g, '%20' ) ) ) )
-			set_cookie( 'fca_pc_woo_add_to_cart', '' )
+		if ( fca_pc_get_cookie( 'fca_pc_woo_add_to_cart' ) ) {
+			fca_pc_trigger_event( 'track', 'AddToCart', JSON.parse( decodeURIComponent ( fca_pc_get_cookie( 'fca_pc_woo_add_to_cart' ).replace(/\+/g, '%20' ) ) ) )
+			fca_pc_set_cookie( 'fca_pc_woo_add_to_cart', '' )
 		}
 
 		if ( typeof fcaPcWooCheckoutCart !== 'undefined' ) {
@@ -178,11 +178,11 @@ jQuery( document ).ready(function($) {
 
 		if ( typeof fcaPcWooPurchase !== 'undefined' ) {
 			if( fcaPcOptions.woo_order_cookie ) {
-				if( get_cookie( 'fcaPcWooPurchase_' + fcaPcWooPurchase.transaction_id ) ) {
+				if( fca_pc_get_cookie( 'fcaPcWooPurchase_' + fcaPcWooPurchase.transaction_id ) ) {
 					//do nothing
 				} else {
 					fca_pc_trigger_event( 'track', 'Purchase', fcaPcWooPurchase )
-					set_cookie( 'fcaPcWooPurchase_' + fcaPcWooPurchase.transaction_id, true, 365 )
+					fca_pc_set_cookie( 'fcaPcWooPurchase_' + fcaPcWooPurchase.transaction_id, true, 365 )
 				}
 			} else {
 				fca_pc_trigger_event( 'track', 'Purchase', fcaPcWooPurchase )				
@@ -203,9 +203,9 @@ jQuery( document ).ready(function($) {
 		}
 		
 		//WOO TIKTOK INTEGRATION
-		if ( get_cookie( 'fca_pc_woo_add_to_cart_tiktok' ) ) {
-			fca_pc_trigger_event( 'track', 'AddToCartTiktok', JSON.parse( decodeURIComponent ( get_cookie( 'fca_pc_woo_add_to_cart_tiktok' ).replace(/\+/g, '%20' ) ) ) )
-			set_cookie( 'fca_pc_woo_add_to_cart_tiktok', '' )
+		if ( fca_pc_get_cookie( 'fca_pc_woo_add_to_cart_tiktok' ) ) {
+			fca_pc_trigger_event( 'track', 'AddToCartTiktok', JSON.parse( decodeURIComponent ( fca_pc_get_cookie( 'fca_pc_woo_add_to_cart_tiktok' ).replace(/\+/g, '%20' ) ) ) )
+			fca_pc_set_cookie( 'fca_pc_woo_add_to_cart_tiktok', '' )
 		}
 
 		if ( typeof fcaPcWooCheckoutCartTiktok !== 'undefined' ) {
@@ -220,11 +220,11 @@ jQuery( document ).ready(function($) {
 		if ( typeof fcaPcWooPurchaseTiktok !== 'undefined' ) {
 			
 			if( fcaPcOptions.woo_order_cookie ) {
-				if( get_cookie( 'fcaPcWooPurchaseTiktok_' + fcaPcWooPurchaseTiktok.transaction_id ) ) {
+				if( fca_pc_get_cookie( 'fcaPcWooPurchaseTiktok_' + fcaPcWooPurchaseTiktok.transaction_id ) ) {
 					//do nothing
 				} else {
 					fca_pc_trigger_event( 'track', 'PurchaseTiktok', fcaPcWooPurchaseTiktok )
-					set_cookie( 'fcaPcWooPurchaseTiktok_' + fcaPcWooPurchaseTiktok.transaction_id, true, 365 )
+					fca_pc_set_cookie( 'fcaPcWooPurchaseTiktok_' + fcaPcWooPurchaseTiktok.transaction_id, true, 365 )
 				}
 			} else {
 				fca_pc_trigger_event( 'track', 'PurchaseTiktok', fcaPcWooPurchaseTiktok )				
@@ -246,18 +246,27 @@ jQuery( document ).ready(function($) {
 		}
 		
 		//WOO PINTEREST INTEGRATION
-		if ( get_cookie( 'fca_pc_woo_add_to_cart_pinterest' ) ) {
-			fca_pc_trigger_event( 'track', 'AddToCartPinterest', JSON.parse( decodeURIComponent ( get_cookie( 'fca_pc_woo_add_to_cart_pinterest' ).replace(/\+/g, '%20' ) ) ) )
-			set_cookie( 'fca_pc_woo_add_to_cart_pinterest', '' )
+		if ( fca_pc_get_cookie( 'fca_pc_woo_add_to_cart_pinterest' ) ) {
+			fca_pc_trigger_event( 'track', 'AddToCartPinterest', JSON.parse( decodeURIComponent ( fca_pc_get_cookie( 'fca_pc_woo_add_to_cart_pinterest' ).replace(/\+/g, '%20' ) ) ) )
+			fca_pc_set_cookie( 'fca_pc_woo_add_to_cart_pinterest', '' )
+		}
+		
+		if ( typeof fcaPcWooCheckoutCartPinterest !== 'undefined' ) {
+			fca_pc_trigger_event( 'track', 'InitiateCheckoutPinterest', fcaPcWooCheckoutCartPinterest)
+
+			$( 'form.checkout' ).on( 'checkout_place_order', function( e ){
+				fca_pc_trigger_event( 'track', 'AddPaymentInfoPinterest', fcaPcWooCheckoutCartPinterest )
+				return true
+			})
 		}
 
 		if ( typeof fcaPcWooPurchasePinterest !== 'undefined' ) {
 			if( fcaPcOptions.woo_order_cookie ) {
-				if( get_cookie( 'fcaPcWooPurchasePinterest_' + fcaPcWooPurchasePinterest.transaction_id ) ) {
+				if( fca_pc_get_cookie( 'fcaPcWooPurchasePinterest_' + fcaPcWooPurchasePinterest.transaction_id ) ) {
 					//do nothing
 				} else {
 					fca_pc_trigger_event( 'track', 'PurchasePinterest', fcaPcWooPurchasePinterest )
-					set_cookie( 'fcaPcWooPurchasePinterest_' + fcaPcWooPurchasePinterest.transaction_id, true, 365 )
+					fca_pc_set_cookie( 'fcaPcWooPurchasePinterest_' + fcaPcWooPurchasePinterest.transaction_id, true, 365 )
 				}
 			} else {
 				fca_pc_trigger_event( 'track', 'PurchasePinterest', fcaPcWooPurchasePinterest )				
@@ -274,9 +283,9 @@ jQuery( document ).ready(function($) {
 		}
 		
 		//WOO SNAPCHAT INTEGRATION
-		if ( get_cookie( 'fca_pc_woo_add_to_cart_snapchat' ) ) {
-			fca_pc_trigger_event( 'track', 'AddToCartSnapchat', JSON.parse( decodeURIComponent ( get_cookie( 'fca_pc_woo_add_to_cart_snapchat' ).replace(/\+/g, '%20' ) ) ) )
-			set_cookie( 'fca_pc_woo_add_to_cart_snapchat', '' )
+		if ( fca_pc_get_cookie( 'fca_pc_woo_add_to_cart_snapchat' ) ) {
+			fca_pc_trigger_event( 'track', 'AddToCartSnapchat', JSON.parse( decodeURIComponent ( fca_pc_get_cookie( 'fca_pc_woo_add_to_cart_snapchat' ).replace(/\+/g, '%20' ) ) ) )
+			fca_pc_set_cookie( 'fca_pc_woo_add_to_cart_snapchat', '' )
 		}
 
 		if ( typeof fcaPcWooCheckoutCartSnapchat !== 'undefined' ) {
@@ -290,11 +299,11 @@ jQuery( document ).ready(function($) {
 
 		if ( typeof fcaPcWooPurchaseSnapchat !== 'undefined' ) {
 			if( fcaPcOptions.woo_order_cookie ) {
-				if( get_cookie( 'fcaPcWooPurchaseSnapchat_' + fcaPcWooPurchaseSnapchat.transaction_id ) ) {
+				if( fca_pc_get_cookie( 'fcaPcWooPurchaseSnapchat_' + fcaPcWooPurchaseSnapchat.transaction_id ) ) {
 					//do nothing
 				} else {
 					fca_pc_trigger_event( 'track', 'PurchaseSnapchat', fcaPcWooPurchaseSnapchat )
-					set_cookie( 'fcaPcWooPurchaseSnapchat_' + fcaPcWooPurchaseSnapchat.transaction_id, true, 365 )
+					fca_pc_set_cookie( 'fcaPcWooPurchaseSnapchat_' + fcaPcWooPurchaseSnapchat.transaction_id, true, 365 )
 				}
 			} else {
 				fca_pc_trigger_event( 'track', 'PurchaseSnapchat', fcaPcWooPurchaseSnapchat )				
@@ -315,9 +324,9 @@ jQuery( document ).ready(function($) {
 		}
 		
 		//WOO GOOGLE ANALYTICS INTEGRATION
-		if ( get_cookie( 'fca_pc_woo_add_to_cart_ga' ) ) {
-			fca_pc_trigger_event( 'track', 'AddToCartGA', JSON.parse( decodeURIComponent ( get_cookie( 'fca_pc_woo_add_to_cart_ga' ).replace(/\+/g, '%20' ) ) ) )
-			set_cookie( 'fca_pc_woo_add_to_cart_ga', '' )
+		if ( fca_pc_get_cookie( 'fca_pc_woo_add_to_cart_ga' ) ) {
+			fca_pc_trigger_event( 'track', 'AddToCartGA', JSON.parse( decodeURIComponent ( fca_pc_get_cookie( 'fca_pc_woo_add_to_cart_ga' ).replace(/\+/g, '%20' ) ) ) )
+			fca_pc_set_cookie( 'fca_pc_woo_add_to_cart_ga', '' )
 		}
 
 		if ( typeof fcaPcWooCheckoutCartGA !== 'undefined' ) {
@@ -331,11 +340,11 @@ jQuery( document ).ready(function($) {
 
 		if ( typeof fcaPcWooPurchaseGA !== 'undefined' ) {
 			if( fcaPcOptions.woo_order_cookie ) {
-				if( get_cookie( 'fcaPcWooPurchaseGA_' + fcaPcWooPurchaseGA.transaction_id ) ) {
+				if( fca_pc_get_cookie( 'fcaPcWooPurchaseGA_' + fcaPcWooPurchaseGA.transaction_id ) ) {
 					//do nothing
 				} else {
 					fca_pc_trigger_event( 'track', 'PurchaseGA', fcaPcWooPurchaseGA )
-					set_cookie( 'fcaPcWooPurchaseGA_' + fcaPcWooPurchaseGA.transaction_id, true, 365 )
+					fca_pc_set_cookie( 'fcaPcWooPurchaseGA_' + fcaPcWooPurchaseGA.transaction_id, true, 365 )
 				}
 			} else {
 				fca_pc_trigger_event( 'track', 'PurchaseGA', fcaPcWooPurchaseGA )				
@@ -538,9 +547,9 @@ jQuery( document ).ready(function($) {
 		}
 		
 		//PURCHASE
-		if ( get_cookie( 'fca_pc_edd_purchase' ) ) {
-			fca_pc_trigger_event( 'track', 'Purchase', JSON.parse( decodeURIComponent ( get_cookie( 'fca_pc_edd_purchase' ).replace(/\+/g, '%20' ) ) ) )
-			set_cookie( 'fca_pc_edd_purchase', '' )
+		if ( fca_pc_get_cookie( 'fca_pc_edd_purchase' ) ) {
+			fca_pc_trigger_event( 'track', 'Purchase', JSON.parse( decodeURIComponent ( fca_pc_get_cookie( 'fca_pc_edd_purchase' ).replace(/\+/g, '%20' ) ) ) )
+			fca_pc_set_cookie( 'fca_pc_edd_purchase', '' )
 		}
 		
 		//EDD GOOGLE ANALYTICS INTEGRATION
@@ -565,9 +574,9 @@ jQuery( document ).ready(function($) {
 		}
 
 		//PURCHASE
-		if ( get_cookie( 'fca_pc_edd_purchase_ga' ) ) {
-			fca_pc_trigger_event( 'track', 'PurchaseGA', JSON.parse( decodeURIComponent ( get_cookie( 'fca_pc_edd_purchase_ga' ).replace(/\+/g, '%20' ) ) ) )
-			set_cookie( 'fca_pc_edd_purchase_ga', '' )
+		if ( fca_pc_get_cookie( 'fca_pc_edd_purchase_ga' ) ) {
+			fca_pc_trigger_event( 'track', 'PurchaseGA', JSON.parse( decodeURIComponent ( fca_pc_get_cookie( 'fca_pc_edd_purchase_ga' ).replace(/\+/g, '%20' ) ) ) )
+			fca_pc_set_cookie( 'fca_pc_edd_purchase_ga', '' )
 		}
 		
 		//EDD TIKTOK INTEGRATION
@@ -591,39 +600,21 @@ jQuery( document ).ready(function($) {
 		}
 		
 		//PURCHASE
-		if ( get_cookie( 'fca_pc_edd_purchase_tiktok' ) ) {
-			fca_pc_trigger_event( 'track', 'PurchaseTiktok', JSON.parse( decodeURIComponent ( get_cookie( 'fca_pc_edd_purchase_tiktok' ).replace(/\+/g, '%20' ) ) ) )
-			set_cookie( 'fca_pc_edd_purchase_tiktok', '' )
-		}
-		
-		//EDD GOOGLE ANALYTICS INTEGRATION
-		if ( typeof fcaPcEddCheckoutCartGA !== 'undefined' ) {
-			fca_pc_trigger_event( 'track', 'InitiateCheckoutGA', fcaPcEddCheckoutCartGA )
-
-			//ADDPAYMENTINFO
-			$( '#edd_purchase_form' ).on( 'submit', function( e ){
-				fca_pc_trigger_event( 'track', 'AddPaymentInfoGA', fcaPcEddCheckoutCartGA )
-				return true
-			})
-		}
-
-		if ( typeof fcaPcEddProductGA !== 'undefined' ) {
-			//VIEWCONTENT
-			if( fcaPcOptions.edd_delay ) {
-				setTimeout( fca_pc_trigger_event, fcaPcOptions.edd_delay * 1000, 'track', 'ViewContent', fcaPcEddProductGA )
-			} else {
-				fca_pc_trigger_event( 'track', 'ViewContentGA', fcaPcEddProductGA )
-			}
-
-		}
-
-		//PURCHASE
-		if ( get_cookie( 'fca_pc_edd_purchase_ga' ) ) {
-			fca_pc_trigger_event( 'track', 'PurchaseGA', JSON.parse( decodeURIComponent ( get_cookie( 'fca_pc_edd_purchase_ga' ).replace(/\+/g, '%20' ) ) ) )
-			set_cookie( 'fca_pc_edd_purchase_ga', '' )
+		if ( fca_pc_get_cookie( 'fca_pc_edd_purchase_tiktok' ) ) {
+			fca_pc_trigger_event( 'track', 'PurchaseTiktok', JSON.parse( decodeURIComponent ( fca_pc_get_cookie( 'fca_pc_edd_purchase_tiktok' ).replace(/\+/g, '%20' ) ) ) )
+			fca_pc_set_cookie( 'fca_pc_edd_purchase_tiktok', '' )
 		}
 		
 		//EDD PINTEREST INTEGRATION
+		if ( typeof fcaPcEddCheckoutCartPinterest !== 'undefined' ) {
+			fca_pc_trigger_event( 'track', 'InitiateCheckoutPinterest', fcaPcEddCheckoutCartPinterest )
+
+			//ADDPAYMENTINFO
+			$( '#edd_purchase_form' ).on( 'submit', function( e ){
+				fca_pc_trigger_event( 'track', 'AddPaymentInfoPinterest', fcaPcEddCheckoutCartPinterest )
+				return true
+			})
+		}
 		
 		if ( typeof fcaPcEddProductPinterest !== 'undefined' ) {
 			//VIEWCONTENT
@@ -636,9 +627,9 @@ jQuery( document ).ready(function($) {
 		}
 
 		//PURCHASE 
-		if ( get_cookie( 'fca_pc_edd_purchase_pinterest' ) ) {
-			fca_pc_trigger_event( 'track', 'PurchasePinterest', JSON.parse( decodeURIComponent ( get_cookie( 'fca_pc_edd_purchase_pinterest' ).replace(/\+/g, '%20' ) ) ) )
-			set_cookie( 'fca_pc_edd_purchase_pinterest', '' )
+		if ( fca_pc_get_cookie( 'fca_pc_edd_purchase_pinterest' ) ) {
+			fca_pc_trigger_event( 'track', 'PurchasePinterest', JSON.parse( decodeURIComponent ( fca_pc_get_cookie( 'fca_pc_edd_purchase_pinterest' ).replace(/\+/g, '%20' ) ) ) )
+			fca_pc_set_cookie( 'fca_pc_edd_purchase_pinterest', '' )
 		}
 		
 		//SNAPCHAT
@@ -662,9 +653,9 @@ jQuery( document ).ready(function($) {
 		}
 
 		//PURCHASE 
-		if ( get_cookie( 'fca_pc_edd_purchase_snapchat' ) ) {
-			fca_pc_trigger_event( 'track', 'PurchaseSnapchat', JSON.parse( decodeURIComponent ( get_cookie( 'fca_pc_edd_purchase_snapchat' ).replace(/\+/g, '%20' ) ) ) )
-			set_cookie( 'fca_pc_edd_purchase_snapchat', '' )
+		if ( fca_pc_get_cookie( 'fca_pc_edd_purchase_snapchat' ) ) {
+			fca_pc_trigger_event( 'track', 'PurchaseSnapchat', JSON.parse( decodeURIComponent ( fca_pc_get_cookie( 'fca_pc_edd_purchase_snapchat' ).replace(/\+/g, '%20' ) ) ) )
+			fca_pc_set_cookie( 'fca_pc_edd_purchase_snapchat', '' )
 		}
 	}
 	
@@ -939,13 +930,31 @@ jQuery( document ).ready(function($) {
 				[ "InitiateCheckoutSnapchat", "START_CHECKOUT" ],	
 				[ "AddToWishlistSnapchat", "ADD_TO_WISHLIST" ],			
 				[ "AddPaymentInfoSnapchat", "ADD_BILLING" ],
-				
+
 			])
 			var snapchat_action = events_map.get( action )
 			
-			if ( snapchat_action ) {
+			if ( snapchat_action ) {				
+				snaptr( name, snapchat_action, event_params, { event_id: eventID, external_id: externalID }  )	
+
+				if( fcaPcOptions.capis.hasOwnProperty( 'Snapchat' ) ) {
 				
-				snaptr( name, snapchat_action, event_params, { event_id: eventID, external_id: externalID }  )				
+					$.ajax({
+						url: fcaPcOptions.ajax_url,
+						type: "POST",
+						data: {
+							action: 'fca_pc_snapchat_api_event',
+							event_name: snapchat_action, 
+							event_time: GMT_time,
+							event_id: eventID,
+							external_id: externalID,
+							client_user_agent: navigator.userAgent,
+							event_source_url: window.location.origin + window.location.pathname,
+							custom_data: JSON.stringify( event_params ),
+							nonce: fcaPcOptions.nonce
+						}
+					})
+				}				
 			}				
 		
 		}
@@ -967,32 +976,8 @@ jQuery( document ).ready(function($) {
 			])
 			
 			var tiktok_action = events_map.get( action )
+			var tiktok_event_params = fca_pc_set_tiktok_event_params( eventID, event_params )				
 			
-			//FORMAT CONTENT ID/CONTENTS FOR TIKTOK
-			if( event_params ) {
-				
-				var tiktok_event_params = JSON.parse( JSON.stringify( event_params ) )
-				tiktok_event_params.event_id = eventID
-				tiktok_event_params.content_id = event_params.content_ids.toString()
-				tiktok_event_params.content_ids = event_params.content_ids.toString()
-				
-				var tiktok_contents = {}
-				
-				;[
-					"content_id",
-					"content_name",					
-				].forEach(function(item){
-					if( tiktok_event_params.hasOwnProperty(item) ) {						
-						tiktok_contents[item] = tiktok_event_params[item]
-					}
-					
-				}) 
-				
-				tiktok_event_params.contents = [ tiktok_contents ]
-				
-				
-			}
-						
 			if ( name === 'trackCustom' && pixelType === 'TikTok' ) {
 				
 				ttq.track( action, tiktok_event_params )
@@ -1044,15 +1029,39 @@ jQuery( document ).ready(function($) {
 		}
 		
 		if( typeof( pintrk ) !== 'undefined' ){
+			var pinterest_event_params = fca_pc_set_pinterest_event_params( eventID, event_params )
+			
 			if ( name === 'trackCustom' && pixelType === 'Pinterest' ) {
-				pintrk( 'track', action, event_params  )	
+				pintrk( 'track', action, pinterest_event_params )	
+				
+				if( fcaPcOptions.capis.hasOwnProperty( 'Pinterest' ) ) {
+				
+					$.ajax({
+						url: fcaPcOptions.ajax_url,
+						type: "POST", 
+						data: {
+							action: 'fca_pc_pinterest_api_event',
+							event_name: action, 
+							event_time: GMT_time,
+							event_id: pinterest_event_params.event_id,
+							external_id: externalID,
+							client_user_agent: navigator.userAgent,
+							event_source_url: window.location.origin + window.location.pathname,
+							custom_data: JSON.stringify( pinterest_event_params ),
+							nonce: fcaPcOptions.nonce
+						}
+					})
+				}
+				
 			} else {
 				var events_map = new Map([
-					[ "AddToCartPinterest", "AddToCart" ],
+					[ "AddToCartPinterest", "AddToCart" ], 
 					[ "PurchasePinterest", "Checkout" ],	
 					[ "LeadPinterest", "Lead" ],				
-					[ "ViewContentPinterest", "PageVisit" ],			
-					[ "CompleteRegistrationPinterest", "Signup" ],
+					[ "ViewContentPinterest", "ViewContent" ],			
+					[ "CompleteRegistrationPinterest", "Signup" ],	
+					[ "AddPaymentInfoPinterest", "AddPaymentInfo" ],
+					[ "InitiateCheckoutPinterest", "InitiateCheckout" ],
 					
 					//[ "Lead", "generate_lead" ], TO DO?
 					//[ "Search", "search" ], TO DO?
@@ -1061,7 +1070,26 @@ jQuery( document ).ready(function($) {
 				var pinterest_action = events_map.get( action )
 
 				if ( pinterest_action ) {
-					pintrk( 'track', pinterest_action, event_params  )				
+					pintrk( 'track', pinterest_action, pinterest_event_params )			
+
+					if( fcaPcOptions.capis.hasOwnProperty( 'Pinterest' ) ) {
+					
+						$.ajax({
+							url: fcaPcOptions.ajax_url,
+							type: "POST", 
+							data: {
+								action: 'fca_pc_pinterest_api_event',
+								event_name: pinterest_action, 
+								event_time: GMT_time,
+								event_id: pinterest_event_params.event_id,
+								external_id: externalID,
+								client_user_agent: navigator.userAgent,
+								event_source_url: window.location.origin + window.location.pathname,
+								custom_data: JSON.stringify( pinterest_event_params ),
+								nonce: fcaPcOptions.nonce
+							}
+						})
+					}					
 				}
 			}
 		}
@@ -1139,21 +1167,6 @@ jQuery( document ).ready(function($) {
 		return ( fcaPcOptions.pixel_types.indexOf( pixel_type ) !== -1 )		
 	}
 
-
-	function set_cookie( name, value ) {
-		document.cookie = name + "=" + value + ";path=/"
-	}
-
-	function get_cookie( name ) {
-		var value = "; " + document.cookie
-		var parts = value.split( "; " + name + "=" )
-
-		if ( parts.length === 2 ) {
-			return parts.pop().split(";").shift()
-		} else {
-			return false
-		}
-	}
 
 	function get_url_param( parameterName ) {
 		var	tmp = []
@@ -1237,6 +1250,57 @@ jQuery( document ).ready(function($) {
 
 		return parameters
 	}
+	
+	function fca_pc_set_tiktok_event_params( eventID, event_params ) {
+		
+		var tiktok_event_params = {}
+		var tiktok_contents = {}
+		
+		if( event_params ) {
+			
+			tiktok_event_params = JSON.parse( JSON.stringify( event_params ) )
+			tiktok_event_params.event_id = eventID
+			
+			if( event_params.content_id ) {
+				tiktok_event_params.content_id = event_params.content_id.toString()
+			}
+			
+			if( event_params.content_ids ) {
+				tiktok_event_params.content_ids = event_params.content_ids.toString()
+			}
+			
+			;[
+				"content_id",
+				"content_name",					
+			].forEach(function(item){
+				if( tiktok_event_params.hasOwnProperty(item) ) {						
+					tiktok_contents[item] = tiktok_event_params[item]
+				}
+				
+			})
+			
+			if( $.isEmptyObject( tiktok_contents ) == false  ) {
+				tiktok_event_params.contents = [ tiktok_contents ]				
+			}
+		}
+		
+		return tiktok_event_params
+	}
+	
+	function fca_pc_set_pinterest_event_params( eventID, event_params ) {
+		
+		var pinterest_event_params = {}
+		
+		if( event_params ) {
+			
+			pinterest_event_params = JSON.parse( JSON.stringify( event_params ) )
+			pinterest_event_params.event_id = eventID
+			
+		}
+		
+		return pinterest_event_params
+	}
+	
 
 	function get_ept_table_id ( $clicked ) {
 		var $table = []
