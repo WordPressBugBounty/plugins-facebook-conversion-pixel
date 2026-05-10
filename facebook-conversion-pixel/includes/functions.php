@@ -161,6 +161,7 @@ function fca_pc_add_pixels( $options ) {
 	$pinterest_pixels = array();
 	$tiktok_pixels = array();
 	$snapchat_pixels = array();
+	$reddit_pixels = array();
 	
 	forEach( $pixels as $pixel ) {
 		$type = empty( $pixel['type'] ) ? '' : $pixel['type'];
@@ -194,6 +195,10 @@ function fca_pc_add_pixels( $options ) {
 				$tiktok_pixels[] = $pixel;
 				break;
 						
+			case 'Reddit':
+				$reddit_pixels[] = $pixel;
+				break;
+						
 			default:
 				$facebook_pixels[] = $pixel;
 		}
@@ -214,6 +219,9 @@ function fca_pc_add_pixels( $options ) {
 	}
 	if ( !empty( $tiktok_pixels ) ) {		
 		fca_pc_add_tiktok_pixels( $tiktok_pixels );
+	}
+	if ( !empty( $reddit_pixels ) ) {		
+		fca_pc_add_reddit_pixels( $reddit_pixels );
 	}
 	if ( !empty( $header_pixels ) ) {		
 		fca_pc_add_header_pixels( $header_pixels );
@@ -283,6 +291,29 @@ function fca_pc_add_tiktok_pixels( $tiktok_pixels ) {
 	}(window, document, 'ttq');
 	</script>
 	<!-- End TikTok -->
+	<?php 
+	echo ob_get_clean();
+	
+}
+
+function fca_pc_add_reddit_pixels( $reddit_pixels ) {
+	$code = ''; //INIT CODE FOR PIXEL
+	
+	forEach ( $reddit_pixels as $pixel ) {		
+		$pixel_id = empty( $pixel['pixel'] ) ? '' : $pixel['pixel'];
+		
+		if( $pixel_id ){			
+			$code .= "rdt('init','$pixel_id');";
+		}
+	}
+	
+	ob_start(); ?>
+	<!-- Reddit Pixel -->
+	<script>
+	!function(w,d){if(!w.rdt){var p=w.rdt=function(){p.sendEvent?p.sendEvent.apply(p,arguments):p.callQueue.push(arguments)};p.callQueue=[];var t=d.createElement("script");t.src="https://www.redditstatic.com/ads/pixel.js",t.async=!0;var s=d.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}}(window,document);<?php echo $code ?>
+	</script>
+	<!-- DO NOT MODIFY UNLESS TO REPLACE A USER IDENTIFIER -->
+	<!-- End Reddit Pixel -->
 	<?php 
 	echo ob_get_clean();
 	
@@ -415,11 +446,11 @@ function fca_pc_localize_pixel_options( $options ) {
 }
 
 function fca_pc_edd_auto_events_enabled( $options ) {
-	return ( !empty( $options['edd_integration'] )OR !empty( $options['edd_integration_ga'] ) OR !empty( $options['edd_integration_pinterest'] ) OR !empty( $options['edd_integration_snapchat'] ) OR !empty( $options['edd_integration_tiktok'] ) );
+	return ( !empty( $options['edd_integration'] ) OR !empty( $options['edd_integration_ga'] ) OR !empty( $options['edd_integration_pinterest'] ) OR !empty( $options['edd_integration_snapchat'] ) OR !empty( $options['edd_integration_tiktok'] ) OR !empty( $options['edd_integration_reddit'] ) );
 }
 
 function fca_pc_woo_auto_events_enabled( $options ) {
-	return ( !empty( $options['woo_integration'] )OR !empty( $options['woo_integration_ga'] ) OR !empty( $options['woo_integration_pinterest'] ) OR !empty( $options['woo_integration_snapchat'] ) OR !empty( $options['woo_integration_tiktok'] ) );
+	return ( !empty( $options['woo_integration'] ) OR !empty( $options['woo_integration_ga'] ) OR !empty( $options['woo_integration_pinterest'] ) OR !empty( $options['woo_integration_snapchat'] ) OR !empty( $options['woo_integration_tiktok'] ) OR !empty( $options['woo_integration_reddit'] ) );
 }
 
 function fca_pc_get_active_events( $options ) {

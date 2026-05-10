@@ -27,6 +27,13 @@ function fca_pc_woo_ajax_add_to_cart() {
 				'content_name' => $p->get_title(),
 				'content_ids' => array( $id ),
 				'content_type' => $content_type,
+			),	
+			'reddit' => array(
+				'value' => $value,
+				'currency' => $currency,
+				'content_name' => $p->get_title(),
+				'content_ids' => array( $id ),
+				'content_type' => $content_type,
 			),
 			'ga' => array(
 				'value' => $value,
@@ -236,6 +243,114 @@ function fca_pc_tiktok_api_call( $pixel, $capi_token, $test_code ){
 	if( FCA_PC_DEBUG ) {
 		error_log( json_encode( $response ) );
 	}
+}
+
+function fca_pc_reddit_api_event() {
+	
+	$nonce = sanitize_text_field( $_POST['nonce'] );
+	
+	if( wp_verify_nonce( $nonce, 'fca_pc_capi_nonce' ) === false ){
+		wp_send_json_error( 'Unauthorized, please log in and try again.' );
+	}
+	
+	$pixels = fca_pc_get_active_pixels();
+	forEach( $pixels as $pixel ){
+		
+		$pixel_id = empty( $pixel['pixel'] ) ? '' : $pixel['pixel'];
+		$pixel_type = empty( $pixel['type'] ) ? '' : $pixel['type'];
+		$capi_token = empty( $pixel['capi'] ) ? '' : $pixel['capi'];
+		$test_code = empty( $pixel['test'] ) ? '' : $pixel['test'];
+		
+		if( ( ( $pixel_type === 'Reddit' ) && $pixel_id && $capi_token ) ) {
+			fca_pc_reddit_api_call( $pixel_id, $capi_token, $test_code );
+		}
+
+	}
+	
+	wp_send_json_success();
+
+}
+add_action( 'wp_ajax_fca_pc_reddit_api_event', 'fca_pc_reddit_api_event' );
+add_action( 'wp_ajax_nopriv_fca_pc_reddit_api_event', 'fca_pc_reddit_api_event' );
+
+function fca_pc_reddit_api_call( $pixel, $capi_token, $test_code ) {
+    $url               = "https://ads-api.reddit.com/api/v3/pixels/$pixel/conversion_events";
+    $event_name        = sanitize_text_field( $_POST['event_name'] );
+    $event_time        = intval( $_POST['event_time'] );
+    $event_id          = sanitize_text_field( $_POST['event_id'] );
+    $external_id       = sanitize_text_field( $_POST['external_id'] );
+    $ip_addr           = fca_pc_get_client_ip();
+    $client_user_agent = sanitize_text_field( $_POST['client_user_agent'] );
+    $event_source_url  = sanitize_text_field( $_POST['event_source_url'] );
+    $custom_data       = empty( $_POST['custom_data'] ) ? array() : json_decode( stripslashes_deep( sanitize_text_field( $_POST['custom_data'] ) ), true );
+
+    // Standard events pass directly as tracking_type; anything else is Custom
+    $standard_events = array( 'PageVisit', 'ViewContent', 'Search', 'AddToCart', 'AddToWishlist', 'Purchase', 'Lead', 'SignUp' );
+
+    if ( in_array( $event_name, $standard_events ) ) {
+        $type = array( 'tracking_type' => $event_name );
+    } else {
+        $type = array(
+            'tracking_type'     => 'Custom',
+            'custom_event_name' => $event_name,
+        );
+    }
+
+    // Build metadata, mapping JS-side field names to Reddit's field names
+    $metadata = array(
+        'conversion_id' => $event_id,
+    );
+	
+    if ( !empty( $custom_data['value'] ) ) {
+		$metadata['value'] = floatval( $custom_data['value'] );
+	}
+    if ( !empty( $custom_data['currency'] ) ) {
+		$metadata['currency'] = $custom_data['currency'];
+	}
+    if ( !empty( $custom_data['itemCount'] ) ) {
+		$metadata['item_count'] = intval( $custom_data['itemCount'] );
+	}
+    if ( !empty( $custom_data['products'] ) ) {
+		$metadata['products'] = $custom_data['products'];
+	}
+	
+    $body = array(
+        'data' => array(
+            'events' => array(
+                array(
+                    'event_at'      => $event_time,
+                    'action_source' => 'WEBSITE',
+					'event_source_url' => $event_source_url,
+                    'type'          => $type,
+                    'metadata'      => $metadata,
+                    'user'          => array(
+                        'ip_address'  => $ip_addr,
+                        'user_agent'  => $client_user_agent
+                    ),
+                )
+            )
+        )
+    );
+
+    if ( $test_code ) {
+        $body['data']['test_id'] = $test_code;
+    }
+
+    $request = wp_remote_request( $url, array(
+        'headers' => array(
+            'Authorization' => 'Bearer ' . $capi_token,
+            'Accept'        => 'application/json',
+            'Content-Type'  => 'application/json',
+        ),
+        'body'   => json_encode( $body ),
+        'method' => 'POST',
+    ));
+
+    $response = wp_remote_retrieve_body( $request );
+
+    if ( FCA_PC_DEBUG ) {
+        error_log( json_encode( $response ) );
+    }
 }
 
 function fca_pc_snapchat_api_event() {

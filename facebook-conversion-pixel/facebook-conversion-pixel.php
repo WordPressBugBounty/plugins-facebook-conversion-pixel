@@ -8,7 +8,7 @@
 	Author: Fatcat Apps
 	Author URI: https://fatcatapps.com/
 	License: GPLv2
-	Version: 3.3.0
+	Version: 3.4.0
 */
 
 
@@ -29,9 +29,9 @@ if ( !defined( 'FCA_PC_PLUGIN_DIR' ) ) {
 	define( 'FCA_PC_PLUGIN_NAME', 'Pixel Cat Premium: ' . FCA_PC_PLUGIN_PACKAGE );
 
 	if ( FCA_PC_DEBUG ) {
-		define( 'FCA_PC_PLUGIN_VER', '3.3.' . time() );
+		define( 'FCA_PC_PLUGIN_VER', '3.4.' . time() );
 	} else {
-		define( 'FCA_PC_PLUGIN_VER', '3.3.0' );
+		define( 'FCA_PC_PLUGIN_VER', '3.4.0' );
 	}
 
 	//LOAD CORE
@@ -56,6 +56,9 @@ if ( !defined( 'FCA_PC_PLUGIN_DIR' ) ) {
 	if ( !empty( $options['woo_integration_tiktok'] ) && file_exists ( FCA_PC_PLUGIN_DIR . '/includes/integrations/woo-events-tiktok.php' ) ) {
 		include_once( FCA_PC_PLUGIN_DIR . '/includes/integrations/woo-events-tiktok.php' );
 	}
+	if ( !empty( $options['woo_integration_reddit'] ) && file_exists ( FCA_PC_PLUGIN_DIR . '/includes/integrations/woo-events-reddit.php' ) ) {
+		include_once( FCA_PC_PLUGIN_DIR . '/includes/integrations/woo-events-reddit.php' );
+	}
 	if ( !empty( $options['woo_feed'] ) && file_exists ( FCA_PC_PLUGIN_DIR . '/includes/integrations/woo-feed.php' ) ) {
 		include_once( FCA_PC_PLUGIN_DIR . '/includes/integrations/woo-feed.php' );
 	}
@@ -73,6 +76,9 @@ if ( !defined( 'FCA_PC_PLUGIN_DIR' ) ) {
 	}
 	if ( !empty( $options['edd_integration_tiktok'] ) && file_exists ( FCA_PC_PLUGIN_DIR . '/includes/integrations/edd-events-tiktok.php' ) ) {
 		include_once( FCA_PC_PLUGIN_DIR . '/includes/integrations/edd-events-tiktok.php' );
+	}
+	if ( !empty( $options['edd_integration_reddit'] ) && file_exists ( FCA_PC_PLUGIN_DIR . '/includes/integrations/edd-events-reddit.php' ) ) {
+		include_once( FCA_PC_PLUGIN_DIR . '/includes/integrations/edd-events-reddit.php' );
 	}
 	if ( !empty( $options['edd_feed'] ) && file_exists ( FCA_PC_PLUGIN_DIR . '/includes/integrations/edd-feed.php' ) ) {
 		include_once( FCA_PC_PLUGIN_DIR . '/includes/integrations/edd-feed.php' );

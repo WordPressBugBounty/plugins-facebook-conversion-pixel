@@ -110,6 +110,11 @@ jQuery( document ).ready(function($) {
 		fca_pc_trigger_event( 'track', 'PageView' )		
 	}
 	
+	//REDDIT INITIAL PAGEVIEW
+	if( fca_pc_pixel_type_enabled( 'Reddit' ) ) {
+		fca_pc_trigger_event( 'track', 'PageViewReddit' )
+	}
+	
 	//REMOVE ADVANCED MATCHING COOKIE IF APPLICABLE
 	if ( fca_pc_get_cookie( 'fca_pc_advanced_matching' ) ) {
 		fca_pc_set_cookie( 'fca_pc_advanced_matching', '' )
@@ -145,6 +150,9 @@ jQuery( document ).ready(function($) {
 						}						
 						if( fca_pc_pixel_type_enabled( 'TikTok' ) ) {
 							fca_pc_trigger_event( 'track', 'AddToCartTiktok', data.tiktok )
+						}						
+						if( fca_pc_pixel_type_enabled( 'Reddit' ) ) {
+							fca_pc_trigger_event( 'track', 'AddToCartReddit', data.reddit )
 						}
 						if( fca_pc_pixel_type_enabled( 'Snapchat' ) ) {
 							fca_pc_trigger_event( 'track', 'AddToCartSnapchat', data.snapchat )
@@ -242,6 +250,40 @@ jQuery( document ).ready(function($) {
 			//WISHLIST
 			$( '.wl-add-to, .add_to_wishlist' ).on( 'click', function( e ){
 				fca_pc_trigger_event( 'track', 'AddToWishlistTiktok', fcaPcWooProductTiktok )
+			})
+		}
+		
+		//WOO REDDIT INTEGRATION
+		if ( fca_pc_get_cookie( 'fca_pc_woo_add_to_cart_reddit' ) ) {
+			fca_pc_trigger_event( 'track', 'AddToCartReddit', JSON.parse( decodeURIComponent ( fca_pc_get_cookie( 'fca_pc_woo_add_to_cart_reddit' ).replace(/\+/g, '%20' ) ) ) )
+			fca_pc_set_cookie( 'fca_pc_woo_add_to_cart_reddit', '' )
+		}
+
+		if ( typeof fcaPcWooPurchaseReddit !== 'undefined' ) {
+			
+			if( fcaPcOptions.woo_order_cookie ) {
+				if( fca_pc_get_cookie( 'fcaPcWooPurchaseReddit_' + fcaPcWooPurchaseReddit.transactionId ) ) {
+					//do nothing
+				} else {
+					fca_pc_trigger_event( 'track', 'PurchaseReddit', fcaPcWooPurchaseReddit )
+					fca_pc_set_cookie( 'fcaPcWooPurchaseReddit_' + fcaPcWooPurchaseReddit.transactionId, true, 365 )
+				}
+			} else {
+				fca_pc_trigger_event( 'track', 'PurchaseReddit', fcaPcWooPurchaseReddit )				
+			}
+			
+		}
+		
+		if ( typeof fcaPcWooProductReddit !== 'undefined' ) {
+			if( fcaPcOptions.woo_delay ) {
+				setTimeout( fca_pc_trigger_event, fcaPcOptions.woo_delay * 1000, 'track', 'ViewContentReddit', fcaPcWooProductReddit )
+			} else {
+				fca_pc_trigger_event( 'track', 'ViewContentReddit', fcaPcWooProductReddit )
+			}
+
+			//WISHLIST
+			$( '.wl-add-to, .add_to_wishlist' ).on( 'click', function( e ){
+				fca_pc_trigger_event( 'track', 'AddToWishlistReddit', fcaPcWooProductReddit )
 			})
 		}
 		
@@ -408,6 +450,23 @@ jQuery( document ).ready(function($) {
 				}
 			}
 			
+			if( fca_pc_pixel_type_enabled( 'Reddit' ) ) {
+				
+				if ( typeof fcaPcEddProduct !== 'undefined' ) {
+					fca_pc_trigger_event( 'track', 'AddToCartReddit', fcaPcEddProductReddit )
+					
+				} else {
+					var product = {			
+						value: $(this).data( 'price' ),
+						currency: fcaPcOptions.edd_currency,
+						content_name: "Easy Digital Download ID " + $(this).data( 'download-id' ),
+						content_ids: $(this).data( 'download-id' ),
+						content_type: $(this).data( 'variable-price' ) == 'no' ? 'product' : 'product_group',			
+					}
+					fca_pc_trigger_event( 'track', 'AddToCartReddit', product )
+				}
+			}
+			
 			if( fca_pc_pixel_type_enabled( 'GA3' ) || fca_pc_pixel_type_enabled( 'GA4' ) || fca_pc_pixel_type_enabled( 'Adwords' ) ) {
 			
 				if ( typeof fcaPcEddProductGA !== 'undefined' ) {
@@ -509,6 +568,22 @@ jQuery( document ).ready(function($) {
 				}
 			}
 			
+			if( fca_pc_pixel_type_enabled( 'Reddit' ) ) {
+			
+				if ( typeof fcaPcEddProductReddit !== 'undefined' ) {
+					fca_pc_trigger_event( 'track', 'AddToWishlistReddit', fcaPcEddProductReddit )
+			
+				} else {
+					var product = {			
+						price: $(this).data( 'price' ),
+						currency: fcaPcOptions.edd_currency,
+						description: "Easy Digital Download ID " + $(this).data( 'download-id' ),
+						item_ids: [ $(this).data( 'download-id' ) ],		
+					}
+					fca_pc_trigger_event( 'track', 'AddToWishlistReddit', product )
+				}
+			}
+			
 			if( fca_pc_pixel_type_enabled( 'Snapchat' ) ) {
 			
 				if ( typeof fcaPcEddProductSnapchat !== 'undefined' ) {
@@ -603,6 +678,22 @@ jQuery( document ).ready(function($) {
 		if ( fca_pc_get_cookie( 'fca_pc_edd_purchase_tiktok' ) ) {
 			fca_pc_trigger_event( 'track', 'PurchaseTiktok', JSON.parse( decodeURIComponent ( fca_pc_get_cookie( 'fca_pc_edd_purchase_tiktok' ).replace(/\+/g, '%20' ) ) ) )
 			fca_pc_set_cookie( 'fca_pc_edd_purchase_tiktok', '' )
+		}
+		
+		//EDD REDDIT INTEGRATION
+		if ( typeof fcaPcEddProductReddit !== 'undefined' ) {
+			//VIEWCONTENT
+			if( fcaPcPost.edd_delay ) {
+				setTimeout( fca_pc_trigger_event, fcaPcPost.edd_delay * 1000, 'track', 'ViewContentReddit', fcaPcEddProductReddit  )
+			} else {
+				fca_pc_trigger_event( 'track', 'ViewContentReddit', fcaPcEddProductReddit )
+			}
+		}
+				
+		//PURCHASE
+		if ( fca_pc_get_cookie( 'fca_pc_edd_purchase_reddit' ) ) {
+			fca_pc_trigger_event( 'track', 'PurchaseReddit', JSON.parse( decodeURIComponent ( fca_pc_get_cookie( 'fca_pc_edd_purchase_reddit' ).replace(/\+/g, '%20' ) ) ) )
+			fca_pc_set_cookie( 'fca_pc_edd_purchase_reddit', '' )
 		}
 		
 		//EDD PINTEREST INTEGRATION
@@ -839,7 +930,7 @@ jQuery( document ).ready(function($) {
 	}
 	
 	function fca_pc_trigger_event( name, action, params, pixelType ) {
-
+		
 		var event_params = params ? add_auto_event_params( params ) : null
 		var currentTime = new Date($.now()).toUTCString()
 		var GMT_time = new Date(currentTime).valueOf() / 1000
@@ -1020,6 +1111,76 @@ jQuery( document ).ready(function($) {
 							client_user_agent: navigator.userAgent,
 							event_source_url: window.location.origin + window.location.pathname,
 							custom_data: JSON.stringify( tiktok_event_params ),
+							nonce: fcaPcOptions.nonce
+						}
+					})
+				}
+			}
+			
+		}
+		
+		if( typeof( rdt ) !== 'undefined' ){
+		
+			var events_map = new Map([
+				[ "PageViewReddit", "PageVisit" ],
+				[ "ViewContentReddit", "ViewContent" ],
+				[ "AddToCartReddit", "AddToCart" ],				
+				[ "AddToWishlistReddit", "AddToWishlist" ],			
+				[ "PurchaseReddit", "Purchase" ],
+				[ "LeadReddit", "Lead" ],
+				[ "CompleteRegistrationReddit", "SignUp" ],
+				
+				//[ "SearchReddit", "Search" ],	
+				
+			])
+			
+			var reddit_action = events_map.get( action )
+			var reddit_event_params = fca_pc_set_reddit_event_params( eventID, event_params, reddit_action )
+			
+			
+			if ( name === 'trackCustom' && pixelType === 'Reddit' ) {
+				reddit_event_params.customEventName = action
+				rdt( 'track', 'Custom', reddit_event_params )
+				
+				if( fcaPcOptions.capis.hasOwnProperty( 'Reddit' ) ) {
+				
+					$.ajax({
+						url: fcaPcOptions.ajax_url,
+						type: "POST",
+						data: {
+							action: 'fca_pc_reddit_api_event',
+							event_name: action, 
+							event_time: GMT_time * 1000,
+							event_id: reddit_event_params.conversionId,
+							external_id: externalID,
+							client_user_agent: navigator.userAgent,
+							event_source_url: window.location.origin + window.location.pathname,
+							custom_data: JSON.stringify( reddit_event_params ),
+							nonce: fcaPcOptions.nonce
+						}
+					})
+				}
+			} 
+			
+			
+			if ( reddit_action ) {
+				
+				rdt( 'track', reddit_action, reddit_event_params )				
+				
+				if( fcaPcOptions.capis.hasOwnProperty( 'Reddit' ) ) {
+				
+					$.ajax({
+						url: fcaPcOptions.ajax_url,
+						type: "POST",
+						data: {
+							action: 'fca_pc_reddit_api_event',
+							event_name: reddit_action, 
+							event_time: GMT_time * 1000,
+							event_id: reddit_event_params.conversionId,
+							external_id: externalID,
+							client_user_agent: navigator.userAgent,
+							event_source_url: window.location.origin + window.location.pathname,
+							custom_data: JSON.stringify( reddit_event_params ),
 							nonce: fcaPcOptions.nonce
 						}
 					})
@@ -1285,6 +1446,37 @@ jQuery( document ).ready(function($) {
 		}
 		
 		return tiktok_event_params
+	}
+	
+	function fca_pc_set_reddit_event_params( eventID, event_params, reddit_action ) {
+		
+		var reddit_event_params = {
+			conversionId: eventID
+		}
+		
+		if( event_params && reddit_action !== 'ViewContent' ) {
+			
+			reddit_event_params = JSON.parse( JSON.stringify( event_params ) )
+			reddit_event_params.conversionId = eventID
+			
+			// Map flat content_* fields into a products array
+			var ids        = event_params.content_ids       ? [].concat( event_params.content_ids )            : []
+			var names      = event_params.content_name      ? event_params.content_name.split( ', ' )          : []
+			var categories = event_params.content_category  ? event_params.content_category.split( ', ' )      : []
+
+			if ( ids.length > 0 ) {
+				reddit_event_params.products = ids.map( function( id, i ) {
+					return {
+						id:       id.toString(),
+						name:     names[ i ]      || '',
+						category: categories[ i ] || '',
+					}
+				} )
+			}
+			
+		}
+		
+		return reddit_event_params
 	}
 	
 	function fca_pc_set_pinterest_event_params( eventID, event_params ) {

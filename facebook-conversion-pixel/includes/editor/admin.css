@@ -539,7 +539,7 @@ select.fca-pc-input-select {
 .onoffswitch-inner:before {
 	content: attr(data-content-on);
 	padding-left: 10px;
-	background-color: #0085ba; color: #FFFFFF;
+	background-color: var(--wp-admin-theme-color); color: #FFFFFF;
 }
 .onoffswitch-inner:after {
 	content: attr(data-content-off);
@@ -561,6 +561,16 @@ select.fca-pc-input-select {
 }
 .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
 	right: 0px;
+}
+
+/* BUTTON */
+.button .dashicons {
+	margin-top: 2px;
+}
+
+.wp-less-than-7 .button .dashicons {
+	vertical-align: middle;
+	margin-top: 0;
 }
 
 @media ( max-width: 600px ) {

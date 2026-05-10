@@ -5,10 +5,10 @@ Donate link: https://fatcatapps.com/pixelcat
 Tags: meta pixel, facebook pixel, conversions API, custom audiences, CAPI
 Plugin URI: https://fatcatapps.com/
 Requires at least: 4.0
-Tested up to: 6.9
+Tested up to: 7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 3.3.0
+Stable tag: 3.4.0
 
 Facebook Pixel Management Made Easy. From Facebook retargeting to Google conversion tracking, this plugin includes everything you need to run successful Facebook and Google ads.
 
@@ -150,6 +150,11 @@ Pixel Cat - Conversion Pixel Manager will automatically detect your old settings
 
 
 == Changelog ==
+
+= Pixel Cat: Conversion Pixel Manager 3.4.0 =
+* Added Reddit Pixel & Reddit CAPI support
+* Fixed/improve UI for WordPress 7.0 admin changes
+* Tested up to WordPress 7.0
 
 = Pixel Cat: Conversion Pixel Manager 3.3.0 =
 * Added Pinterest Conversions API support 

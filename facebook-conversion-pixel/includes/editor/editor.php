@@ -61,6 +61,9 @@ function fca_pc_admin_enqueue() {
 }
 
 function fca_pc_settings_page() {
+	
+	global $wp_version;
+
 	ob_start();	
 	
 	echo fca_pc_admin_header_nav();
@@ -77,18 +80,21 @@ function fca_pc_settings_page() {
 	}
 
 	$form_class = FCA_PC_PLUGIN_PACKAGE === 'Lite' ? 'fca-pc-free' : 'fca-pc-premium';
+	
+	if ( version_compare( $wp_version, '7', '<' ) ) {
+		$form_class .= ' wp-less-than-7';
+	}
 
 	$options['events'] = empty ( $options['events'] ) ? array() : $options['events'];
 
 	fca_pc_admin_enqueue();
-	
-	
-	echo fca_pc_add_pixel_form();
-	echo fca_pc_add_event_form();
+		
 	?>
 	<div id='fca-pc-overlay' style='display:none'></div>
 	<form novalidate style='display: none' action='' method='post' id='fca_pc_main_form' class='<?php echo $form_class ?>'>
 		<?php echo wp_nonce_field( 'fca_pc_admin_nonce', 'fca_pc[nonce]' ) ?>
+		<?php echo fca_pc_add_pixel_form(); ?>
+		<?php echo fca_pc_add_event_form(); ?>
 		<div class='twoup'>
 			<div>
 				<div class='fca-pc-nav'>
@@ -143,6 +149,13 @@ function fca_pc_add_event_form() {
 		'InitiateCheckoutTiktok' => 'InitiateCheckout',
 		'PurchaseTiktok' => 'CompletePayment',
 		'ViewContentTiktok' => 'ViewContent',
+		
+		'AddToCartReddit' => 'AddToCart',
+		'AddToWishlistReddit' => 'AddToWishlist',
+		'CompleteRegistrationReddit' => 'SignUp',
+		'LeadReddit' => 'Lead',
+		'PurchaseReddit' => 'Purchase',
+		'ViewContentReddit' => 'ViewContent',
 		
 		'AddPaymentInfoSnapchat' => 'ADD_BILLING',
 		'AddToCartSnapchat' => 'ADD_CART',
@@ -328,7 +341,7 @@ function fca_pc_custom_param_table() {
 
 	<table id='fca_pc_custom_param_table' style='width:100%;'>
 	</table>
-	<button type='button' id='fca-pc-add-custom-param' class='button button-secondary' ><span class='dashicons dashicons-plus' style='vertical-align: middle;' ></span><?php esc_attr_e( 'Add Custom Parameter', 'facebook-conversion-pixel' ) ?></button>
+	<button type='button' id='fca-pc-add-custom-param' class='button button-secondary' ><span class='dashicons dashicons-plus'' ></span><?php esc_attr_e( 'Add Custom Parameter', 'facebook-conversion-pixel' ) ?></button>
 
 	<?php
 	return ob_get_clean();
@@ -374,6 +387,7 @@ function fca_pc_add_pixel_form() {
 		'Pinterest' => 'Pinterest Pixel',
 		'Snapchat' => 'Snapchat Pixel',
 		'TikTok' => 'TikTok Pixel',
+		'Reddit' => 'Reddit Pixel',
 		'Custom Header Script' => 'Custom Header Script',
 		
 	);
@@ -389,6 +403,7 @@ function fca_pc_add_pixel_form() {
 			'Pinterest' => 'Pinterest Pixel (Premium Only)',
 			'TikTok' => 'TikTok Pixel (Premium Only)',
 			'Snapchat' => 'Snapchat Pixel (Premium Only)',
+			'Reddit' => 'Reddit Pixel (Premium Only)',
 			
 		);
 		
@@ -408,7 +423,7 @@ function fca_pc_add_pixel_form() {
 						<?php
 							forEach ( $types as $key => $value ) {
 								$atts = '';
-								if( FCA_PC_PLUGIN_PACKAGE === 'Lite' && in_array( $key, array( 'Pinterest', 'Snapchat', 'Adwords', 'TikTok' ) ) ) {
+								if( FCA_PC_PLUGIN_PACKAGE === 'Lite' && in_array( $key, array( 'Pinterest', 'Snapchat', 'Adwords', 'TikTok', 'Reddit' ) ) ) {
 									$atts = 'disabled';
 								}
 								echo "<option $atts value='" . esc_attr( $key ) . "'>$value</option>";
@@ -560,6 +575,35 @@ function fca_pc_add_pixel_form() {
 					<input id='fca-pc-modal-tiktok-test-input' type='text' placeholder='e.g. TEST_01235' class='fca-pc-input-text' style='width: 100%'>
 				</td>
 			</tr>	
+			
+			<tr id='fca-pc-reddit-input-tr'>
+				<th style="top: 0;"><?php esc_attr_e( 'Reddit Pixel ID', 'facebook-conversion-pixel' ); echo fca_pc_tooltip( esc_attr__( 'Enter your Reddit Pixel ID here', 'facebook-conversion-pixel' ) ) ?>
+					<br><a class="fca_pc_hint" href="#" target="_blank"> <?php echo esc_attr__( 'What is my Reddit Pixel ID?', 'facebook-conversion-pixel' ) ?></a>
+				</th>
+				<td id="fca-pc-reddit-helptext" class="fca-pc-validation-helptext" title="<?php echo esc_attr__(' ', 'facebook-conversion-pixel' ) ?>">
+					<input id='fca-pc-modal-reddit-input' type='text' placeholder='e.g. a2_ijbse9tyvbax' class='fca-pc-input-text' style='width: 100%'>
+				</td>
+			</tr>	
+			<tr id='fca-pc-reddit-capi-input-tr'>
+				<th style="top: 0;"><?php esc_attr_e( 'Conversions Access Token', 'facebook-conversion-pixel' ); echo fca_pc_tooltip( esc_attr__( 'Enter your Conversions access token here. Add to enable Reddit Conversions API which is optional but may provide more reliable event tracking.', 'facebook-conversion-pixel' ) ) ?>
+					<br><a class="fca_pc_hint" href="#" target="_blank"> <?php echo esc_attr__( 'What is my Conversions Access Token?', 'facebook-conversion-pixel' ) ?></a>
+				</th>
+				<td id="fca-pc-reddit-capi-helptext" class="fca-pc-validation-helptext" title="<?php echo esc_attr__(' ', 'facebook-conversion-pixel' ) ?>">
+					<input id='fca-pc-modal-reddit-capi-input' type='text' placeholder='e.g. eyJhbGciOiJSUzI1...' class='fca-pc-input-text' style='width: 100%'>
+				</td>
+			</tr>
+			
+			<tr id='fca-pc-reddit-test-input-tr'>
+				<th style="top: 0;"><?php esc_attr_e( 'Reddit Test ID', 'facebook-conversion-pixel' ); echo fca_pc_tooltip( esc_attr__( 'Test Reddit Conversions API connectivity (found in Event testing in your Reddit Ads Manager). Remove this when going live!', 'facebook-conversion-pixel' ) ) ?>
+					<br><a class="fca_pc_hint" href="#" target="_blank"> <?php echo esc_attr__( 'What is my Reddit Test ID?', 'facebook-conversion-pixel' ) ?></a>
+				</th>
+				
+				<td id="fca-pc-reddit-test-helptext" class="fca-pc-validation-helptext" title="<?php echo esc_attr__(' ', 'facebook-conversion-pixel' ) ?>">
+					<input id='fca-pc-modal-reddit-test-input' type='text' placeholder='e.g. t2_28ic83000a' class='fca-pc-input-text' style='width: 100%'>
+				</td>
+			</tr>
+
+			
 			<tr class='fca-pc-exclude-input-tr'>
 				<th style="top: 0;"><?php echo esc_attr( 'Excluded Pages', 'facebook-conversion-pixel' ) . fca_sp_premium_only_link() ?></th>				
 				<td>
@@ -581,7 +625,7 @@ function fca_pc_add_pixel_form() {
 
 
 function fca_pc_active_pixels_table( $options ){
-
+	
 	$pixels = empty( $options['pixels'] ) ? array() : $options['pixels'];
 
 	ob_start(); ?>
@@ -612,7 +656,7 @@ function fca_pc_active_pixels_table( $options ){
 					} ?>
 				</table>
 				<button type="button" id="fca_pc_new_pixel_id" class="button button-secondary" title=" <?php echo esc_attr__( 'Add a Pixel', 'facebook-conversion-pixel' ) ?> ">
-					<span class="dashicons dashicons-plus" style="vertical-align: middle;"></span>Add Pixel
+					<span class="dashicons dashicons-plus"></span>Add Pixel
 				</button>
 				<img class="fca_pc_onboarding" src="<?php echo FCA_PC_PLUGINS_URL . '/assets/onboarding-arrow.png'?>" >
 				<img class="fca_pc_onboarding" style="display:block;" src="<?php echo FCA_PC_PLUGINS_URL . '/assets/onboarding-text.png'?>" >
@@ -666,15 +710,17 @@ function fca_pc_event_panel( $options ) {
 				echo fca_pc_event_row_html( $event );
 			}?>
 		</table>
-		<button type="button" id="fca_pc_new_fb_event" class="button button-secondary"><span class="dashicons dashicons-plus" style="vertical-align: middle;"></span><?php esc_attr_e( 'Add Facebook Event', 'facebook-conversion-pixel' ) ?></button>
+		<button type="button" id="fca_pc_new_fb_event" class="button button-secondary"><span class="dashicons dashicons-plus"></span><?php esc_attr_e( 'Add Facebook Event', 'facebook-conversion-pixel' ) ?></button>
 		
-		<button type="button" id="fca_pc_new_pinterest_event" class="button button-secondary"><span class="dashicons dashicons-plus" style="vertical-align: middle;"></span><?php esc_attr_e( 'Add Pinterest Event', 'facebook-conversion-pixel' ) ?></button>
+		<button type="button" id="fca_pc_new_pinterest_event" class="button button-secondary"><span class="dashicons dashicons-plus"></span><?php esc_attr_e( 'Add Pinterest Event', 'facebook-conversion-pixel' ) ?></button>
 		
-		<button type="button" id="fca_pc_new_snapchat_event" class="button button-secondary"><span class="dashicons dashicons-plus" style="vertical-align: middle;"></span><?php esc_attr_e( 'Add Snapchat Event', 'facebook-conversion-pixel' ) ?></button>
+		<button type="button" id="fca_pc_new_snapchat_event" class="button button-secondary"><span class="dashicons dashicons-plus"></span><?php esc_attr_e( 'Add Snapchat Event', 'facebook-conversion-pixel' ) ?></button>
 		
-		<button type="button" id="fca_pc_new_ga_event" class="button button-secondary"><span class="dashicons dashicons-plus" style="vertical-align: middle;"></span><?php esc_attr_e( 'Add Google Event', 'facebook-conversion-pixel' ) ?></button>
+		<button type="button" id="fca_pc_new_ga_event" class="button button-secondary"><span class="dashicons dashicons-plus"></span><?php esc_attr_e( 'Add Google Event', 'facebook-conversion-pixel' ) ?></button>
 		
-		<button type="button" id="fca_pc_new_tiktok_event" class="button button-secondary"><span class="dashicons dashicons-plus" style="vertical-align: middle;"></span><?php esc_attr_e( 'Add TikTok Event', 'facebook-conversion-pixel' ) ?></button>
+		<button type="button" id="fca_pc_new_tiktok_event" class="button button-secondary"><span class="dashicons dashicons-plus"></span><?php esc_attr_e( 'Add TikTok Event', 'facebook-conversion-pixel' ) ?></button>
+		
+		<button type="button" id="fca_pc_new_reddit_event" class="button button-secondary"><span class="dashicons dashicons-plus"></span><?php esc_attr_e( 'Add Reddit Event', 'facebook-conversion-pixel' ) ?></button>
 		<br>
 	</div>
 	<?php
@@ -795,6 +841,9 @@ function fca_pc_maybe_enable_integrations_on_save( $data ) {
 					case 'TikTok':
 						$data['woo_integration_tiktok'] = 'on';
 						break;
+					case 'Reddit':
+						$data['woo_integration_reddit'] = 'on';
+						break;
 				}
 				
 			}
@@ -824,6 +873,9 @@ function fca_pc_maybe_enable_integrations_on_save( $data ) {
 						break;
 					case 'TikTok':
 						$data['edd_integration_tiktok'] = 'on';
+						break;
+					case 'Reddit':
+						$data['edd_integration_reddit'] = 'on';
 						break;
 				}
 				
@@ -857,6 +909,10 @@ function fca_pc_maybe_enable_integrations_on_save( $data ) {
 	if( !in_array( 'TikTok', $new_pixels_types, true ) ) {
 		$data['woo_integration_tiktok'] = '';
 		$data['edd_integration_tiktok'] = '';
+	}
+	if( !in_array( 'Reddit', $new_pixels_types, true ) ) {
+		$data['woo_integration_reddit'] = '';
+		$data['edd_integration_reddit'] = '';
 	}
 	
 	return $data;
@@ -1070,6 +1126,7 @@ function fca_pc_add_woo_integrations( $options ) {
 	$woo_pinterest_integration_on = empty( $options['woo_integration_pinterest'] ) ? '' : 'on';
 	$woo_snapchat_integration_on = empty( $options['woo_integration_snapchat'] ) ? '' : 'on';
 	$woo_tiktok_integration_on = empty( $options['woo_integration_tiktok'] ) ? '' : 'on';
+	$woo_reddit_integration_on = empty( $options['woo_integration_reddit'] ) ? '' : 'on';
 	$woo_extra_params = empty( $options['woo_extra_params'] ) ? '' : 'on';
 	$woo_order_cookie = empty( $options['woo_order_cookie'] ) ? '' : 'on';
 	$woo_delay = empty( $options['woo_delay'] ) ? 0 : intVal($options['woo_delay']);
@@ -1128,6 +1185,10 @@ function fca_pc_add_woo_integrations( $options ) {
 				<tr>
 					<th><?php echo esc_attr('WooCommerce Events for TikTok', 'facebook-conversion-pixel') . fca_sp_premium_only_link() ?></th>
 						<td><?php echo fca_pc_input( 'woo_integration_tiktok', '', $woo_tiktok_integration_on, 'checkbox' ) ?>
+				</tr>
+				<tr>
+					<th><?php echo esc_attr('WooCommerce Events for Reddit', 'facebook-conversion-pixel') . fca_sp_premium_only_link() ?></th>
+						<td><?php echo fca_pc_input( 'woo_integration_reddit', '', $woo_reddit_integration_on, 'checkbox' ) ?>
 				</tr>
 				<tr>
 					<th><?php echo esc_attr( 'Delay ViewContent Event', 'facebook-conversion-pixel' ) . fca_sp_premium_only_link() ?></th>
@@ -1201,6 +1262,7 @@ function fca_pc_add_edd_integrations( $options ) {
 	$edd_pinterest_integration_on = empty( $options['edd_integration_pinterest'] ) ? '' : 'on';
 	$edd_snapchat_integration_on = empty( $options['edd_integration_snapchat'] ) ? '' : 'on';
 	$edd_tiktok_integration_on = empty( $options['edd_integration_tiktok'] ) ? '' : 'on';
+	$edd_reddit_integration_on = empty( $options['edd_integration_reddit'] ) ? '' : 'on';
 	$edd_extra_params = empty( $options['edd_extra_params'] ) ? '' : 'on';
 	$edd_delay = empty( $options['edd_delay'] ) ? 0 : intVal($options['edd_delay']);
 	$edd_feed_on = empty( $options['edd_feed'] ) ? '' : 'on';
@@ -1259,6 +1321,11 @@ function fca_pc_add_edd_integrations( $options ) {
 					<span class='fca_pc_hint'><?php esc_attr_e("Automatically send the following Easy Digital Downloads events to TikTok: Add To Cart, Add&nbsp;Payment&nbsp;Info, Purchase, View&nbsp;Content, Search, and Add&nbsp;to&nbsp;Wishlist.", 'facebook-conversion-pixel' ) ?></span></td>
 				</tr>
 				<tr>
+					<th><?php echo esc_attr( 'Track EDD Events with Reddit', 'facebook-conversion-pixel' ) . fca_sp_premium_only_link() ?></th>
+						<td><?php echo fca_pc_input( 'edd_integration_reddit', '', $edd_reddit_integration_on, 'checkbox' ) ?>
+					<span class='fca_pc_hint'><?php esc_attr_e("Automatically send the following Easy Digital Downloads events to Reddit: Add To Cart, Add&nbsp;Payment&nbsp;Info, Purchase, View&nbsp;Content, Search, and Add&nbsp;to&nbsp;Wishlist.", 'facebook-conversion-pixel' ) ?></span></td>
+				</tr>
+				<tr>
 					<th><?php echo esc_attr( 'Delay ViewContent Event', 'facebook-conversion-pixel' ) . fca_sp_premium_only_link() ?></th>
 						<td><?php echo fca_pc_input( 'edd_delay', '', $edd_delay, 'number', "min='0' max='100' step='1'" ) ?>seconds<br>
 					<span class='fca_pc_hint'><?php esc_attr_e("Exclude bouncing visitors by delaying the ViewContent event on download pages.", 'facebook-conversion-pixel' ) ?></span></td>
@@ -1309,6 +1376,7 @@ function fca_pc_marketing_metabox() {
 			<li><div class="dashicons dashicons-yes"></div> <?php esc_attr_e( 'Pinterest Pixel', 'facebook-conversion-pixel' ); ?></li>
 			<li><div class="dashicons dashicons-yes"></div> <?php esc_attr_e( 'Snapschat Pixel', 'facebook-conversion-pixel' ); ?></li>
 			<li><div class="dashicons dashicons-yes"></div> <?php esc_attr_e( 'Google Ads', 'facebook-conversion-pixel' ); ?></li>
+			<li><div class="dashicons dashicons-yes"></div> <?php esc_attr_e( 'Reddit Pixel', 'facebook-conversion-pixel' ); ?></li>
 			<li><div class="dashicons dashicons-yes"></div> <?php esc_attr_e( 'Trigger events after time delay or if user scrolls', 'facebook-conversion-pixel' ); ?></li>
 			<li><div class="dashicons dashicons-yes"></div> <?php esc_attr_e( 'Boost Meta conversions using Advanced Matching & more', 'facebook-conversion-pixel' ); ?></li>
 			<li><div class="dashicons dashicons-yes"></div> <?php esc_attr_e( 'Exclude Pixel from specific pages (instead of displaying it site-wide)', 'facebook-conversion-pixel' ); ?></li>
