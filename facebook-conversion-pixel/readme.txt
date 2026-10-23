@@ -5,7 +5,7 @@ Donate link: https://fatcatapps.com/pixelcat
 Tags: meta pixel, facebook pixel, conversions API, custom audiences, CAPI
 Plugin URI: https://fatcatapps.com/
 Requires at least: 4.0
-Tested up to: 7.0
+Tested up to: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Stable tag: 3.4.0
